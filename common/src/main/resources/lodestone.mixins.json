@@ -23,7 +23,8 @@
     "modules.core.client.MultiPlayerGameModeMixin",
     "modules.toolkit.client.AbstractContainerScreenMixin",
     "modules.toolkit.client.CreativeModeInventoryScreenMixin",
-    "client.RenderTargetStencilMixin"
+    "client.RenderTargetStencilMixin",
+    "client.EntityModelSetReloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

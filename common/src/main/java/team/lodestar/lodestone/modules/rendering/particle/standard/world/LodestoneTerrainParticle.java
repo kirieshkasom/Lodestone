@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import team.lodestar.lodestone.internal.client.ParticleModelAccess;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.options.LodestoneTerrainParticleOptions;
 
 public class LodestoneTerrainParticle extends LodestoneWorldParticle {
@@ -15,13 +17,13 @@ public class LodestoneTerrainParticle extends LodestoneWorldParticle {
     public LodestoneTerrainParticle(ClientLevel world, LodestoneTerrainParticleOptions data, double x, double y, double z, double xd, double yd, double zd) {
         super(world, data, null, x, y, z, xd, yd, zd);
         this.blockPos = data.blockPos;
-        var state = data.blockState;
+        BlockState state = data.blockState;
         this.setSprite(Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getParticleIcon(state));
         this.gravity = 1.0F;
         this.rCol = 0.6F;
         this.gCol = 0.6F;
         this.bCol = 0.6F;
-        if (net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions.of(state).areBreakingParticlesTinted(state, level, blockPos)) {
+        if (ParticleModelAccess.isTinted(state, level, blockPos)) {
             int i = Minecraft.getInstance().getBlockColors().getColor(state, level, blockPos, 0);
             this.rCol *= (float)(i >> 16 & 0xFF) / 255.0F;
             this.gCol *= (float)(i >> 8 & 0xFF) / 255.0F;

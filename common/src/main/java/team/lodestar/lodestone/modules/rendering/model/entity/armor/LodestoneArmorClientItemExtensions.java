@@ -1,61 +1,94 @@
 package team.lodestar.lodestone.modules.rendering.model.entity.armor;
 
-import net.minecraft.client.*;
-import net.minecraft.client.model.*;
-import net.minecraft.util.*;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.item.*;
-import net.neoforged.neoforge.client.*;
-import net.neoforged.neoforge.client.extensions.common.*;
-import org.jetbrains.annotations.*;
-import team.lodestar.lodestone.modules.rendering.model.entity.*;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import team.lodestar.lodestone.modules.rendering.model.entity.EntityModelHolder;
 
-import java.util.function.*;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-/**
- * @author SammySemicolon
- * Convenient client item extension responsible for properly linking a specified model with the player model
- */
-public class LodestoneArmorClientItemExtensions implements IClientItemExtensions {
-	private final Supplier<? extends Model> model;
+public class LodestoneArmorClientItemExtensions {
+    private final Function<EntityModelSet, ? extends Model> model;
 
-	public LodestoneArmorClientItemExtensions(EntityModelHolder<? extends Model> model) {
-		this(model::getModel);
-	}
+    public LodestoneArmorClientItemExtensions(EntityModelHolder<? extends Model> model) {
+        this((Function<EntityModelSet, ? extends Model>) model::getModel);
+    }
 
-	public LodestoneArmorClientItemExtensions(Supplier<? extends Model> model) {
-		this.model = model;
-	}
+    public LodestoneArmorClientItemExtensions(Supplier<? extends Model> model) {
+        this(entityModels -> model.get());
+    }
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	@Override
-	public @NotNull Model getGenericArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack itemStack, @NotNull EquipmentSlot armorSlot, @NotNull HumanoidModel playerModel) {
-		var model = this.model.get();
-		if (model instanceof EntityModel entityModel) {
+    private LodestoneArmorClientItemExtensions(Function<EntityModelSet, ? extends Model> model) {
+        this.model = Objects.requireNonNull(model);
+    }
 
-			float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
-			float f = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
-			float f1 = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public Model getGenericArmorModel(LivingEntity entity, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel playerModel, EntityModelSet entityModels, float partialTicks) {
+        Model armorModel = this.model.apply(entityModels);
+        if (armorModel instanceof EntityModel entityModel) {
+            float bodyRotation = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
+            float headRotation = Mth.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
+            float walkPosition = entity.walkAnimation.position();
+            float walkSpeed = entity.walkAnimation.speed();
+            float tickCount = entity.tickCount + partialTicks;
+            float netHeadYaw = headRotation - bodyRotation;
+            float netHeadPitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
 
-			float walkPosition = entity.walkAnimation.position();
-			float walkSpeed = entity.walkAnimation.speed();
-			float tickCount = entity.tickCount + partialTicks;
+            if (entityModel instanceof LodestoneArmorModel lodestoneArmorModel) {
+                lodestoneArmorModel.slot = armorSlot;
+                lodestoneArmorModel.copyFromDefault(playerModel);
+            }
+            entityModel.setupAnim(entity, walkPosition, walkSpeed, tickCount, netHeadYaw, netHeadPitch);
+            if (entityModel instanceof HumanoidModel humanoidModel) {
+                copyHumanoidProperties(playerModel, humanoidModel);
+                setHumanoidPartVisibility(humanoidModel, armorSlot);
+            } else {
+                playerModel.copyPropertiesTo(entityModel);
+            }
+        }
+        return armorModel;
+    }
 
-			float netHeadYaw = f1 - f;
-			float netHeadPitch = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static void copyHumanoidProperties(HumanoidModel source, HumanoidModel target) {
+        source.copyPropertiesTo(target);
+        target.head.visible = source.head.visible;
+        target.hat.visible = source.hat.visible;
+        target.body.visible = source.body.visible;
+        target.rightArm.visible = source.rightArm.visible;
+        target.leftArm.visible = source.leftArm.visible;
+        target.rightLeg.visible = source.rightLeg.visible;
+        target.leftLeg.visible = source.leftLeg.visible;
+    }
 
-			if (entityModel instanceof LodestoneArmorModel armorModel) {
-				armorModel.slot = armorSlot;
-				armorModel.copyFromDefault(playerModel);
-			}
-			entityModel.setupAnim(entity, walkPosition, walkSpeed, tickCount, netHeadYaw, netHeadPitch);
-			if (entityModel instanceof HumanoidModel<?> humanoidModel) {
-				ClientHooks.copyModelProperties(playerModel, humanoidModel);
-			}
-			else {
-				playerModel.copyPropertiesTo(entityModel);
-			}
-		}
-		return model;
-	}
+    private static void setHumanoidPartVisibility(HumanoidModel<?> model, EquipmentSlot slot) {
+        model.setAllVisible(false);
+        switch (slot) {
+            case HEAD -> {
+                model.head.visible = true;
+                model.hat.visible = true;
+            }
+            case CHEST -> {
+                model.body.visible = true;
+                model.rightArm.visible = true;
+                model.leftArm.visible = true;
+            }
+            case LEGS -> {
+                model.body.visible = true;
+                model.rightLeg.visible = true;
+                model.leftLeg.visible = true;
+            }
+            case FEET -> {
+                model.rightLeg.visible = true;
+                model.leftLeg.visible = true;
+            }
+        }
+    }
 }

@@ -4,7 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.core.BlockPos;
-import net.neoforged.neoforge.client.model.data.ModelData;
+import net.minecraft.client.resources.model.BakedModel;
+import team.lodestar.lodestone.internal.client.ParticleModelAccess;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.options.LodestoneItemCrumbsParticleOptions;
 
 public class LodestoneItemCrumbParticle extends LodestoneWorldParticle {
@@ -14,8 +15,8 @@ public class LodestoneItemCrumbParticle extends LodestoneWorldParticle {
 
     public LodestoneItemCrumbParticle(ClientLevel world, LodestoneItemCrumbsParticleOptions data, double x, double y, double z, double xd, double yd, double zd) {
         super(world, data, null, x, y, z, xd, yd, zd);
-        var model = Minecraft.getInstance().getItemRenderer().getModel(data.stack, world, null, 0);
-        this.setSprite(model.getOverrides().resolve(model, data.stack, world, null, 0).getParticleIcon(ModelData.EMPTY));
+        BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(data.stack, world, null, 0);
+        this.setSprite(ParticleModelAccess.itemSprite(model));
         this.quadSize /= 2.0F;
         this.uo = this.random.nextFloat() * 3.0F;
         this.vo = this.random.nextFloat() * 3.0F;

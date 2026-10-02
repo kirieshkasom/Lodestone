@@ -12,6 +12,7 @@ public final class LodestoneNeoForgeWorldEventsClient {
     }
 
     public static void install() {
+        LodestoneNeoForgeParticleModels.install();
         team.lodestar.lodestone.modules.rendering.texture.StencilPlatform.installNativeEnabler(com.mojang.blaze3d.pipeline.RenderTarget::enableStencil);
         WorldEventCommandContext.clientLevelSupplier(() -> Minecraft.getInstance().level);
         WorldEventRendererRegistration.install((type, renderer) -> LodestoneWorldEventRenderers.registerRenderer(type, renderer == null ? null : renderer.get()));
