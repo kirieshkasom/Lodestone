@@ -10,7 +10,6 @@ import team.lodestar.lodestone.compability.*;
 import team.lodestar.lodestone.registry.common.*;
 import team.lodestar.lodestone.registry.common.particle.*;
 
-@Mod(LodestoneLib.LODESTONE)
 public class LodestoneLib {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String LODESTONE = "lodestone";

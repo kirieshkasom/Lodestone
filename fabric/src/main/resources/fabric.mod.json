@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "lodestone",
+  "version": "${version}",
+  "name": "Lodestone",
+  "description": "A library containing various utilities.",
+  "authors": ["Lodestar"],
+  "license": "GPL-3.0-only",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["team.lodestar.lodestone.fabric.LodestoneFabric"],
+    "client": ["team.lodestar.lodestone.fabric.LodestoneFabricClient"]
+  },
+  "mixins": ["lodestone.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

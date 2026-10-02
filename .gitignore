@@ -25,5 +25,5 @@ run
 forge*changelog.txt
 run-data/
 
-/src/main/java/team/lodestar/lodestone/test/**
-/src/generated/resources/.cache/
+/common/src/main/java/team/lodestar/lodestone/test/**
+/common/src/generated/resources/.cache/
