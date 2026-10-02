@@ -16,6 +16,7 @@ import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.instance
 import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.instance.InstanceFormat;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.instance.InstanceWriter;
 import team.lodestar.lodestone.systems.rendering.IVertexBuffer;
+import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 
 import java.nio.FloatBuffer;
 import java.util.List;
@@ -97,7 +98,7 @@ public class QuadBatchRenderer implements ParticleVisualBatchRenderer {
                 for (InstanceAttribute attribute : writer.attributes()) {
                     glEnableVertexAttribArray(currentAttribute);
                     glVertexAttribPointer(currentAttribute, attribute.componentCount(), GL_FLOAT, false, instanceFormat.strideBytes(), (long) (elementOffsetFloats + attribute.offsetFloats()) * Float.BYTES);
-                    glVertexAttribDivisor(currentAttribute, attribute.divisor());
+                    LodestoneRenderSystem.vertexAttribDivisor(currentAttribute, attribute.divisor());
                     currentAttribute++;
                 }
 
@@ -107,7 +108,7 @@ public class QuadBatchRenderer implements ParticleVisualBatchRenderer {
             IVertexBuffer.cast(quadBuffer).drawWithShaderInstanced(viewMat, projMat, shader, actualInstances);
 
             for (int i = baseAttributes; i < currentAttribute; i++) {
-                glVertexAttribDivisor(i, 0);
+                LodestoneRenderSystem.vertexAttribDivisor(i, 0);
                 glDisableVertexAttribArray(i);
             }
 

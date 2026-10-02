@@ -17,17 +17,29 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
     implementation(project(":common"))
 }
+val commonDevTest = project(":common").extensions.getByType<SourceSetContainer>()["devTest"]
+val devTest by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath + commonDevTest.output
+    runtimeClasspath += sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath + commonDevTest.output
+    resources.srcDir(rootProject.file("common/src/devTest/resources"))
+}
+
 loom {
     accessWidenerPath.set(file("src/main/resources/lodestone.accesswidener"))
     mixin.useLegacyMixinAp.set(false)
     runs {
         named("client") {
             name("Fabric - Client")
+            if (providers.gradleProperty("lodestoneSmoke").isPresent) {
+                runDir("build/gpu-smoke/run")
+                vmArg("-Dlodestone.tests.smoke=${layout.buildDirectory.dir("gpu-smoke").get().asFile.absolutePath}")
+            }
         }
         named("server") {
             name("Fabric - Server")
         }
         configureEach {
+            source(devTest)
             ideConfigGenerated(true)
         }
         register("datagen") {
@@ -40,6 +52,10 @@ loom {
         }
     }
     mods {
+        register("lodestone_tests") {
+            sourceSet(devTest)
+            sourceSet(commonDevTest)
+        }
         register("lodestone") {
             sourceSet(sourceSets.main.get())
             sourceSet(project(":common").extensions.getByType<SourceSetContainer>()["main"])

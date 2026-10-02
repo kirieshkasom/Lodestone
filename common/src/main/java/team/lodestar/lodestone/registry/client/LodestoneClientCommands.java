@@ -5,7 +5,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import team.lodestar.lodestone.modules.toolkit.command.ParticleTestCommand;
 import team.lodestar.lodestone.modules.toolkit.command.worldevent.ParticleDebugCommand;
 
 import java.util.function.BiConsumer;
@@ -22,8 +21,5 @@ public class LodestoneClientCommands {
         LiteralCommandNode<S> command = dispatcher.register(LiteralArgumentBuilder.<S>literal("lodec")
                 .then(ParticleDebugCommand.register(success, failure)));
         dispatcher.register(LiteralArgumentBuilder.<S>literal(LODESTONE + "c").redirect(command));
-        LiteralCommandNode<S> tests = dispatcher.register(LiteralArgumentBuilder.<S>literal("lode")
-                .then(ParticleTestCommand.register(success, failure)));
-        dispatcher.register(LiteralArgumentBuilder.<S>literal(LODESTONE).redirect(tests));
     }
 }

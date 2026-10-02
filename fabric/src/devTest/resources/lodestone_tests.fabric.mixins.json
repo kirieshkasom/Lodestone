@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "team.lodestar.lodestone.test.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "FabricTestCommandMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

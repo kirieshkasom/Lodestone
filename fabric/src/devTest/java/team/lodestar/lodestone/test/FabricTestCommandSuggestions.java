@@ -1,12 +1,23 @@
-package team.lodestar.lodestone.fabric;
+package team.lodestar.lodestone.test;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 
-public final class FabricParticleCommandSuggestions {
+import java.util.List;
 
-    private FabricParticleCommandSuggestions() {
+public final class FabricTestCommandSuggestions {
+
+    private FabricTestCommandSuggestions() {
+    }
+
+    public static <S> boolean shouldSendToServer(String command, S source, CommandDispatcher<S> client, CommandDispatcher<S> combined) {
+        return !complete(client.parse(command, source)) && complete(combined.parse(command, source));
+    }
+
+    private static <S> boolean complete(ParseResults<S> parse) {
+        return !parse.getReader().canRead() && parse.getContext().getLastChild().getCommand() != null;
     }
 
     public static <S> void merge(CommandDispatcher<S> target, CommandDispatcher<S> client) {
@@ -18,9 +29,11 @@ public final class FabricParticleCommandSuggestions {
         if (clientRoot == null || targetRoot == null) {
             return;
         }
-        CommandNode<S> particles = clientRoot.getChild("particle");
-        if (particles != null) {
-            targetRoot.addChild(copySuggestions(particles));
+        for (String name : List.of("particle", "tests")) {
+            CommandNode<S> branch = clientRoot.getChild(name);
+            if (branch != null) {
+                targetRoot.addChild(copySuggestions(branch));
+            }
         }
     }
 

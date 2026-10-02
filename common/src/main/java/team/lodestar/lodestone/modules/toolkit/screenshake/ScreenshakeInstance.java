@@ -31,7 +31,7 @@ public class ScreenshakeInstance {
             Easing.CODEC.fieldOf("startingCurve").forGetter(data -> data.startingCurve),
             Easing.CODEC.fieldOf("endingCurve").forGetter(data -> data.endingCurve),
             Codec.FLOAT.fieldOf("coefficient").forGetter(data -> data.coefficient),
-            ScreenshakePositionData.CODEC.optionalFieldOf("positionData").forGetter(data -> Optional.of(data.positionData))
+            ScreenshakePositionData.CODEC.optionalFieldOf("positionData").forGetter(data -> Optional.ofNullable(data.positionData))
     ).apply(instance, ScreenshakeInstance::new));
 
     public static StreamCodec<ByteBuf, ScreenshakeInstance> STREAM_CODEC = ByteBufCodecs.fromCodec(ScreenshakeInstance.CODEC);

@@ -32,6 +32,13 @@ configurations.runtimeClasspath {
     extendsFrom(localRuntime)
 }
 
+val commonDevTest = project(":common").extensions.getByType<SourceSetContainer>()["devTest"]
+val devTest by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath + commonDevTest.output
+    runtimeClasspath += sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath + commonDevTest.output
+    resources.srcDir(rootProject.file("common/src/devTest/resources"))
+}
+
 neoForge {
     version = project.property("neo_version").toString()
 
@@ -56,6 +63,10 @@ neoForge {
     runs {
         register("client") {
             client()
+            if (providers.gradleProperty("lodestoneSmoke").isPresent) {
+                gameDirectory.set(layout.buildDirectory.dir("gpu-smoke/run"))
+                systemProperty("lodestone.tests.smoke", layout.buildDirectory.dir("gpu-smoke").get().asFile.absolutePath)
+            }
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
@@ -83,12 +94,17 @@ neoForge {
         }
 
         configureEach {
+            sourceSet.set(devTest)
             systemProperty("forge.logging.markers", "REGISTRIES")
             logLevel = org.slf4j.event.Level.DEBUG
         }
     }
 
     mods {
+        create("lodestone_tests") {
+            sourceSet(devTest)
+            sourceSet(commonDevTest)
+        }
         create("${property("mod_id")}") {
             sourceSet(sourceSets.main.get())
             sourceSet(project(":common").extensions.getByType<SourceSetContainer>()["main"])

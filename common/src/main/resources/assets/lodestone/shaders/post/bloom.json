@@ -145,7 +145,7 @@
       ]
     },
     {
-      "name": "blit",
+      "name": "lodestone:copy",
       "intarget": "final",
       "outtarget": "minecraft:main"
     }

@@ -89,3 +89,8 @@ dependencies {
     compileOnly("io.github.spair:imgui-java-lwjgl3:${property("imgui_version")}")
     compileOnly("io.github.spair:imgui-java-binding:${property("imgui_version")}")
 }
+
+val devTest by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
+}

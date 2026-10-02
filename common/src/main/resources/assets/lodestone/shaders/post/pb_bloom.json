@@ -116,7 +116,7 @@
       ]
     },
     {
-      "name": "blit",
+      "name": "lodestone:copy",
       "intarget": "bloomColor",
       "outtarget": "minecraft:main"
     }

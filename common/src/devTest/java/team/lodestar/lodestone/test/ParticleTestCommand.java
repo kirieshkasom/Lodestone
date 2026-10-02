@@ -1,4 +1,4 @@
-package team.lodestar.lodestone.modules.toolkit.command;
+package team.lodestar.lodestone.test;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -44,7 +44,7 @@ public final class ParticleTestCommand {
         ClientLevel level = minecraft.level;
         LocalPlayer player = minecraft.player;
         if (level == null || player == null) {
-            failure.accept(source, Component.literal("Join a world to test particles."));
+            failure.accept(source, Component.literal("how the FUCK are you doing that"));
             return 0;
         }
         Vec3 direction = player.getLookAngle();
@@ -55,9 +55,7 @@ public final class ParticleTestCommand {
                     .setLifetime(40)
                     .setScaleData(GenericParticleData.create(1f, 0).build())
                     .setTransparencyData(GenericParticleData.create(1, 0).build())
-//                    .setMotion(direction.scale(0.03))
                     .setRandomMotion(0.02);
-//                    .setRandomOffset(0.4);
             if (particle == TestParticle.SPARK || particle == TestParticle.EXTRUDING_SPARK || particle == TestParticle.THIN_EXTRUDING_SPARK) {
                 builder.setBehavior(SparkParticleBehavior.sparkBehavior())
                         .setScaleData(GenericParticleData.create(0.05f, 0).build())

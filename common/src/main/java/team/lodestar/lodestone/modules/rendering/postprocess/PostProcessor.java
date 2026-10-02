@@ -133,8 +133,8 @@ public abstract class PostProcessor {
                 if (!isActive) return;
                 postChain.process(partialTicks);
 
-                GlStateManager._glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mc.getMainRenderTarget().frameBufferId);
                 afterProcess();
+                mc.getMainRenderTarget().bindWrite(true);
             }
         }
     }

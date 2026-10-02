@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "lodestone_tests",
+  "version": "1.0",
+  "name": "Lodestone Development Tests",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "team.lodestar.lodestone.test.FabricTestMod"
+    ],
+    "client": [
+      "team.lodestar.lodestone.test.FabricTestClient"
+    ]
+  },
+  "depends": {
+    "lodestone": "*",
+    "fabric-api": "*"
+  },
+  "mixins": [
+    "lodestone_tests.fabric.mixins.json"
+  ]
+}

@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.renderer.EffectInstance;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,6 +20,23 @@ import java.util.Map;
 
 @Mixin(EffectInstance.class)
 public abstract class EffectInstanceMixin {
+
+    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;"), require = 0)
+    private ResourceLocation lodestone$effectLocation(String path) {
+        return lodestone$programLocation(path);
+    }
+
+    @Redirect(method = "getOrCreate", at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;"), require = 0)
+    private static ResourceLocation lodestone$effectProgramLocation(String path) {
+        return lodestone$programLocation(path);
+    }
+
+    @Unique
+    private static ResourceLocation lodestone$programLocation(String path) {
+        String prefix = "shaders/program/";
+        ResourceLocation location = ResourceLocation.parse(path.substring(prefix.length()));
+        return location.withPath(value -> prefix + value);
+    }
 
     @Unique
     private Map<String, SamplerType> samplerTypeMap = Maps.newHashMap();

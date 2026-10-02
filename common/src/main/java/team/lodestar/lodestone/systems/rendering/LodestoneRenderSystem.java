@@ -4,6 +4,10 @@ import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.systems.RenderSystem;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.lwjgl.opengl.ARBInstancedArrays;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.GL33;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -17,6 +21,17 @@ public class LodestoneRenderSystem extends RenderSystem {
     private static final List<IBufferObject> bufferObjects = new ArrayList<>();
 
     private static final Vector3f viewBobOffset = new Vector3f();
+
+    public static void vertexAttribDivisor(int index, int divisor) {
+        GLCapabilities capabilities = GL.getCapabilities();
+        if (capabilities.OpenGL33) {
+            GL33.glVertexAttribDivisor(index, divisor);
+        } else if (capabilities.GL_ARB_instanced_arrays) {
+            ARBInstancedArrays.glVertexAttribDivisorARB(index, divisor);
+        } else {
+            throw new UnsupportedOperationException("Instanced particle rendering requires OpenGL 3.3 or ARB_instanced_arrays");
+        }
+    }
 
 
     public static void wrap(RenderCall renderCall) {
