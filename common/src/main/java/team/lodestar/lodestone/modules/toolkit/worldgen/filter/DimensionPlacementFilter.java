@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.worldgen.filter;
 
+import team.lodestar.lodestone.internal.registration.LodestonePlacements;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-import team.lodestar.lodestone.registry.common.*;
 
 import java.util.List;
 import java.util.Set;
@@ -40,7 +40,7 @@ public class DimensionPlacementFilter extends PlacementFilter {
 
     @Override
     public PlacementModifierType<?> type() {
-        return LodestonePlacementFillers.DIMENSION.get();
+        return LodestonePlacements.DIMENSION.get();
     }
 
     public static Set<ResourceKey<Level>> fromStrings(List<? extends String> dimensions) {

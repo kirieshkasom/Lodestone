@@ -12,9 +12,8 @@ import team.lodestar.lodestone.modules.toolkit.item.*;
 @EventBusSubscriber()
 public class ModEvents {
 
-    @SubscribeEvent
     public static void registerCommon(FMLCommonSetupEvent event) {
-        LodestoneCommandArgumentTypes.registerArgumentTypes();
+        event.enqueueWork(LodestoneCommandArgumentTypes::registerArgumentTypes);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

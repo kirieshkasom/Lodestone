@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.multiblock;
 
+import team.lodestar.lodestone.internal.registration.LodestoneBlockEntityTypes;
 import net.minecraft.core.*;
 import net.minecraft.nbt.*;
 import net.minecraft.world.InteractionHand;
@@ -31,7 +32,7 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
     }
 
     public MultiBlockComponentEntity(BlockPos pos, BlockState state) {
-        super(LodestoneBlockEntities.MULTIBLOCK_COMPONENT.get(), pos, state);
+        super(LodestoneBlockEntityTypes.MULTIBLOCK_COMPONENT.get(), pos, state);
     }
 
     @Override

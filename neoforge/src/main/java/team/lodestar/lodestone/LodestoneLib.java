@@ -15,6 +15,7 @@ import team.lodestar.lodestone.registry.common.LodestoneEnchantmentComponents;
 import team.lodestar.lodestone.registry.common.LodestonePlacementFillers;
 import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
 import team.lodestar.lodestone.registry.common.particle.LodestoneParticleTypes;
+import team.lodestar.lodestone.events.ModEvents;
 public class LodestoneLib {
     public static final Logger LOGGER = LodestoneCommon.LOGGER;
     public static final String LODESTONE = LodestoneCommon.LODESTONE;
@@ -29,6 +30,7 @@ public class LodestoneLib {
         LodestoneWorldEventTypes.WORLD_EVENT_TYPES.register(modEventBus);
         LodestoneEnchantmentComponents.ENCHANTMENT_COMPONENTS.register(modEventBus);
         LodestoneCommandArgumentTypes.register(modEventBus);
+        modEventBus.addListener(ModEvents::registerCommon);
         CuriosCompat.init();
     }
 

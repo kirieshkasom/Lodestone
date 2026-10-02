@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.enchanting;
 
+import team.lodestar.lodestone.internal.registration.LodestoneEnchantmentEffects;
 import com.google.common.collect.*;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.*;
@@ -41,7 +42,7 @@ public record LodestoneSlotBasedEnchantmentAttributeEffect(ResourceLocation id, 
         }
         EnchantmentHelper.runIterationOnItem(stack, (holder, level) -> {
             var enchantment = holder.value();
-            enchantment.getEffects(LodestoneEnchantmentComponents.SLOT_BOUND_ATTRIBUTES.get()).forEach((effect) -> {
+            enchantment.getEffects(LodestoneEnchantmentEffects.SLOT_BOUND_ATTRIBUTES.get()).forEach((effect) -> {
                 EquipmentSlot equipmentSlot = stack.getEquipmentSlot();
                 if (equipmentSlot == null) {
                     if (stack.getItem() instanceof ArmorItem armorItem) {

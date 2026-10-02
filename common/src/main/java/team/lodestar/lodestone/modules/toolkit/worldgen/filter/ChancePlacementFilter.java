@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.worldgen.filter;
 
+import team.lodestar.lodestone.internal.registration.LodestonePlacements;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
@@ -8,7 +9,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementFilter;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-import team.lodestar.lodestone.registry.common.*;
 
 public class ChancePlacementFilter extends PlacementFilter {
 
@@ -24,7 +24,7 @@ public class ChancePlacementFilter extends PlacementFilter {
     }
 
     public PlacementModifierType<?> type() {
-        return LodestonePlacementFillers.CHANCE.get();
+        return LodestonePlacements.CHANCE.get();
     }
 
     @Override

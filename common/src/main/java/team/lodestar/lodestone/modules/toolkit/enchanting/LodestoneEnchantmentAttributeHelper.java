@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.toolkit.enchanting;
 
+import team.lodestar.lodestone.internal.registration.LodestoneEnchantmentEffects;
 import com.google.common.collect.*;
 import net.minecraft.core.*;
 import net.minecraft.world.entity.*;
@@ -41,7 +42,7 @@ public class LodestoneEnchantmentAttributeHelper {
                 mutable.setValue(compute(modifier, mutable.getValue()));
             }
         }));
-        runIterationOnItem(stack, filter, (enchantment, level) -> enchantment.value().getEffects(LodestoneEnchantmentComponents.SLOT_BOUND_ATTRIBUTES.get()).forEach(effect -> {
+        runIterationOnItem(stack, filter, (enchantment, level) -> enchantment.value().getEffects(LodestoneEnchantmentEffects.SLOT_BOUND_ATTRIBUTES.get()).forEach(effect -> {
             if (effect.attribute().equals(attribute)) {
                 var modifier = effect.getModifier(level, EquipmentSlotGroup.ANY);
                 mutable.setValue(compute(modifier, mutable.getValue()));

@@ -10,14 +10,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
-import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.handlers.screenparticle.ScreenParticleHandler;
 import team.lodestar.lodestone.modules.rendering.*;
 import team.lodestar.lodestone.modules.toolkit.worldevent.*;
-import team.lodestar.lodestone.registry.client.LodestoneModels;
-import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
-import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
+import team.lodestar.lodestone.internal.client.LodestoneClientLifecycle;
 
 
 @EventBusSubscriber(value = Dist.CLIENT)
@@ -26,16 +23,7 @@ public class ClientGameEvents {
     @SubscribeEvent
     public static void clientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        final ClientLevel level = minecraft.level;
-        if (level != null) {
-            if (minecraft.isPaused()) {
-                return;
-            }
-            Camera camera = minecraft.gameRenderer.getMainCamera();
-            WorldEventHandler.tick(level);
-            ScreenshakeHandler.clientTick(level, camera);
-            ScreenParticleHandler.tickParticles();
-        }
+        LodestoneClientLifecycle.clientTick(minecraft, WorldEventHandler::tick);
     }
 
     @SubscribeEvent
@@ -85,11 +73,6 @@ public class ClientGameEvents {
 
     @SubscribeEvent
     public static void shutdownEvent(GameShuttingDownEvent event) {
-        LodestoneRenderSystem.wrap(() -> {
-            LodestoneModels.cleanup();
-            LodestoneRenderSystem.destroyBufferObjects();
-            RenderPassHandler.close();
-            LodestoneCommon.LOGGER.info("Shutting down Lodestone");
-        });
+        LodestoneClientLifecycle.shutdown();
     }
 }

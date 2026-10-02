@@ -1,5 +1,7 @@
 package team.lodestar.lodestone.registry.common;
 
+import team.lodestar.lodestone.internal.registration.LodestoneCommandArguments;
+import team.lodestar.lodestone.neoforge.NeoForgeRegistryRegistrar;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
@@ -15,8 +17,8 @@ import java.util.function.Supplier;
 public class LodestoneCommandArgumentTypes {
     public static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, LodestoneCommon.LODESTONE);
 
-    public static final Supplier<ArgumentTypeInfo<WorldEventTypeArgument,?>> WORLD_EVENT_TYPE_ARG = COMMAND_ARGUMENT_TYPES.register("world_event_type_arg", () -> SingletonArgumentInfo.contextFree(WorldEventTypeArgument::worldEventType));
-    public static final Supplier<ArgumentTypeInfo<WorldEventInstanceArgument,?>> WORLD_EVENT_INSTANCE_ARG = COMMAND_ARGUMENT_TYPES.register("world_event_instance_arg", () -> SingletonArgumentInfo.contextFree(WorldEventInstanceArgument::worldEventInstance));
+    public static final Supplier<ArgumentTypeInfo<WorldEventTypeArgument,?>> WORLD_EVENT_TYPE_ARG = new NeoForgeRegistryRegistrar<>(COMMAND_ARGUMENT_TYPES).register(LodestoneCommandArguments.WORLD_EVENT_TYPE_ARG);
+    public static final Supplier<ArgumentTypeInfo<WorldEventInstanceArgument,?>> WORLD_EVENT_INSTANCE_ARG = new NeoForgeRegistryRegistrar<>(COMMAND_ARGUMENT_TYPES).register(LodestoneCommandArguments.WORLD_EVENT_INSTANCE_ARG);
 
 
 

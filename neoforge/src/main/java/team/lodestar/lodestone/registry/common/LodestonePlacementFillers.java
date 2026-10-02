@@ -1,5 +1,7 @@
 package team.lodestar.lodestone.registry.common;
 
+import team.lodestar.lodestone.internal.registration.LodestonePlacements;
+import team.lodestar.lodestone.neoforge.NeoForgeRegistryRegistrar;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -16,10 +18,10 @@ public class LodestonePlacementFillers {
 
 
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ChancePlacementFilter>> CHANCE =
-            MODIFIERS.register("chance", () -> () ->(ChancePlacementFilter.CODEC));
+            new NeoForgeRegistryRegistrar<>(MODIFIERS).register(LodestonePlacements.CHANCE);
 
 
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<DimensionPlacementFilter>> DIMENSION =
-            MODIFIERS.register("dimension", () -> () -> (DimensionPlacementFilter.CODEC));
+            new NeoForgeRegistryRegistrar<>(MODIFIERS).register(LodestonePlacements.DIMENSION);
 
 }
