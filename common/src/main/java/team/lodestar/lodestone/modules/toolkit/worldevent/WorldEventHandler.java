@@ -7,8 +7,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 import team.lodestar.lodestone.events.types.worldevent.*;
+import team.lodestar.lodestone.internal.network.LodestoneNetworking;
 import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
 
 import java.util.Iterator;
@@ -80,7 +80,7 @@ public class WorldEventHandler {
                     instance.tick(level);
                 }
                 if (instance.dirty) {
-                    PacketDistributor.sendToAllPlayers(new UpdateWorldEventPayload(instance));
+                    LodestoneNetworking.sendToAllPlayers(new UpdateWorldEventPayload(instance));
                     instance.dirty = false;
                 }
             }

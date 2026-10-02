@@ -1,13 +1,10 @@
 package team.lodestar.lodestone.modules.toolkit.worldevent;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.*;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import team.lodestar.lodestone.internal.network.PayloadContext;
 import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
 import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
 
@@ -31,12 +28,13 @@ public class SyncWorldEventPayload extends OneSidedPayloadData {
         this.eventData = eventData;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void handle(IPayloadContext context) {
-        WorldEventType eventType = LodestoneWorldEventTypes.WORLD_EVENT_TYPE_REGISTRY.get(type);
-        ClientLevel level = Minecraft.getInstance().level;
-        WorldEventHandler.addWorldEvent(level, start, eventType.createInstance(eventData));
+    public void handle(PayloadContext context) {
+        context.execute(() -> {
+            WorldEventType eventType = LodestoneWorldEventTypes.WORLD_EVENT_TYPE_REGISTRY.get(type);
+            Level level = context.player().level();
+            WorldEventHandler.addWorldEvent(level, start, eventType.createInstance(eventData));
+        });
     }
 
     @Override

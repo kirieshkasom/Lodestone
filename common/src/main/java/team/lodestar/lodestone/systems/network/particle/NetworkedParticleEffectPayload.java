@@ -1,13 +1,9 @@
 package team.lodestar.lodestone.systems.network.particle;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import team.lodestar.lodestone.internal.network.PayloadContext;
 import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
 
 import javax.annotation.Nullable;
@@ -63,12 +59,12 @@ public class NetworkedParticleEffectPayload extends OneSidedPayloadData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void handle(IPayloadContext iPayloadContext) {
-        Minecraft instance = Minecraft.getInstance();
-        ClientLevel level = instance.level;
-        effect.castAndAct(level, level.random, positionData, colorData, extraData);
+    public void handle(PayloadContext context) {
+        context.execute(() -> {
+            Level level = context.player().level();
+            effect.castAndAct(level, level.random, positionData, colorData, extraData);
+        });
     }
 
     public NetworkedParticleEffectType<?> getEffectType(String id) {

@@ -7,6 +7,8 @@ import net.neoforged.fml.ModContainer;
 import org.apache.logging.log4j.Logger;
 import team.lodestar.lodestone.compability.CuriosCompat;
 import team.lodestar.lodestone.internal.LodestoneCommon;
+import team.lodestar.lodestone.internal.network.LodestoneNetworking;
+import team.lodestar.lodestone.neoforge.NeoForgeNetworkTransport;
 import team.lodestar.lodestone.neoforge.NeoForgeParticleRegistrar;
 import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
 import team.lodestar.lodestone.registry.common.LodestoneBlockEntities;
@@ -22,6 +24,7 @@ public class LodestoneLib {
     public static final RandomSource RANDOM = LodestoneCommon.RANDOM;
 
     public LodestoneLib(IEventBus modEventBus, ModContainer modContainer) {
+        LodestoneNetworking.install(new NeoForgeNetworkTransport());
         LodestoneCommon.init(new NeoForgeParticleRegistrar());
         LodestoneParticleTypes.PARTICLES.register(modEventBus);
         LodestonePlacementFillers.MODIFIERS.register(modEventBus);

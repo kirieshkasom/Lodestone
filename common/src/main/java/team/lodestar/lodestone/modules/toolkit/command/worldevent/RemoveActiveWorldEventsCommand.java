@@ -6,7 +6,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import team.lodestar.lodestone.internal.network.LodestoneNetworking;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventAttachment;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventInstanceArgument;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventTypeArgument;
@@ -77,7 +77,7 @@ public class RemoveActiveWorldEventsCommand {
 
     private static void endAndUpdate(WorldEventInstance instance, Level level) {
         instance.end(level);
-        PacketDistributor.sendToAllPlayers(new UpdateWorldEventPayload(instance));
+        LodestoneNetworking.sendToAllPlayers(new UpdateWorldEventPayload(instance));
         instance.dirty = false;
     }
 }

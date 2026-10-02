@@ -1,12 +1,9 @@
 package team.lodestar.lodestone.modules.toolkit.worldevent;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import team.lodestar.lodestone.internal.network.PayloadContext;
 import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
 import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
 
@@ -30,19 +27,20 @@ public class UpdateWorldEventPayload extends OneSidedPayloadData {
         this.eventData = eventData;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void handle(IPayloadContext context) {
-        ClientLevel level = Minecraft.getInstance().level;
-        if (level != null) {
-            var worldData = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
-            for (WorldEventInstance instance : worldData.activeWorldEvents) {
-                if (instance.uuid.equals(uuid)) {
-                    instance.deserializeNBT(eventData);
-                    break;
+    public void handle(PayloadContext context) {
+        context.execute(() -> {
+            Level level = context.player().level();
+            if (level != null) {
+                WorldEventAttachment worldData = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                for (WorldEventInstance instance : worldData.activeWorldEvents) {
+                    if (instance.uuid.equals(uuid)) {
+                        instance.deserializeNBT(eventData);
+                        break;
+                    }
                 }
             }
-        }
+        });
     }
 
     @Override

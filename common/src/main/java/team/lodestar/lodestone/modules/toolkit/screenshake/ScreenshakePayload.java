@@ -1,9 +1,7 @@
 package team.lodestar.lodestone.modules.toolkit.screenshake;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import team.lodestar.lodestone.internal.network.PayloadContext;
 import team.lodestar.lodestone.handlers.ScreenshakeHandler;
 import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
 
@@ -27,10 +25,9 @@ public class ScreenshakePayload extends OneSidedPayloadData {
         this.instance = instance;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void handle(IPayloadContext context) {
-        ScreenshakeHandler.addScreenshake(instance);
+    public void handle(PayloadContext context) {
+        context.execute(() -> ScreenshakeHandler.addScreenshake(instance));
     }
 
     @Override

@@ -11,7 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.network.PacketDistributor;
+import team.lodestar.lodestone.internal.network.LodestoneNetworking;
 import team.lodestar.lodestone.modules.rendering.particle.standard.data.color.*;
 
 import java.awt.*;
@@ -147,9 +147,9 @@ public abstract class NetworkedParticleEffectType<T extends NetworkedParticleEff
 
         public ParticleEffectBuilder<T> spawn(ServerLevel level) {
             if (position == null) {
-                return spawn(PacketDistributor::sendToAllPlayers);
+                return spawn(LodestoneNetworking::sendToAllPlayers);
             }
-            return spawn(p -> PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(position.getAsBlockPos()), p));
+            return spawn(p -> LodestoneNetworking.sendToPlayersTrackingChunk(level, new ChunkPos(position.getAsBlockPos()), p));
         }
 
         public ParticleEffectBuilder<T> spawn(Consumer<NetworkedParticleEffectPayload> sender) {

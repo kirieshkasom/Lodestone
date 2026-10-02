@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+import team.lodestar.lodestone.internal.network.LodestoneNetworking;
 import org.jetbrains.annotations.*;
 import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
 
@@ -117,9 +117,9 @@ public abstract class WorldEventInstance {
     @ApiStatus.Internal
     public static <T extends WorldEventInstance> void sync(T instance, @Nullable ServerPlayer player) {
         if (player != null) {
-            PacketDistributor.sendToPlayer(player, new SyncWorldEventPayload(instance, false));
+            LodestoneNetworking.sendToPlayer(player, new SyncWorldEventPayload(instance, false));
             return;
         }
-        PacketDistributor.sendToAllPlayers(new SyncWorldEventPayload(instance, false));
+        LodestoneNetworking.sendToAllPlayers(new SyncWorldEventPayload(instance, false));
     }
 }

@@ -5,6 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 public final class LodestoneFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        LodestoneFabricNetworking.installClient();
         LodestoneFabricClientLifecycle.install();
     }
 }

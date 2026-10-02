@@ -1,41 +1,45 @@
 package team.lodestar.lodestone.registry.common;
 
-import net.minecraft.network.*;
-import net.minecraft.network.codec.*;
-import net.minecraft.network.protocol.common.custom.*;
-import net.minecraft.resources.*;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.codec.StreamDecoder;
+import net.minecraft.network.codec.StreamMemberEncoder;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.*;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import team.lodestar.lodestone.internal.LodestoneCommon;
-import team.lodestar.lodestone.modules.toolkit.screenshake.ScreenshakePayload;
-import team.lodestar.lodestone.modules.toolkit.worldevent.SyncWorldEventPayload;
-import team.lodestar.lodestone.modules.toolkit.worldevent.UpdateWorldEventPayload;
-import team.lodestar.lodestone.systems.network.*;
-import team.lodestar.lodestone.systems.network.particle.NetworkedParticleEffectPayload;
+import team.lodestar.lodestone.systems.network.LodestoneNetworkPayloadData;
+import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
+import team.lodestar.lodestone.systems.network.TwoSidedPayloadData;
+import team.lodestar.lodestone.systems.network.NeoForgePayloadContext;
 
 import java.util.HashMap;
+import java.util.function.Function;
+import team.lodestar.lodestone.internal.network.ClientPayloadRegistrar;
+import team.lodestar.lodestone.internal.network.LodestonePayloads;
+import team.lodestar.lodestone.internal.network.PayloadTypes;
+import team.lodestar.lodestone.internal.network.PayloadCodecs;
 
-@EventBusSubscriber()
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class LodestoneNetworkPayloads {
 
     public static final LodestonePayloadRegistryHelper LODESTONE_CHANNEL = new LodestonePayloadRegistryHelper(LodestoneCommon.LODESTONE);
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        var registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("1");
 
-        LODESTONE_CHANNEL.playToClient(registrar, "sync_world_event", SyncWorldEventPayload.class, SyncWorldEventPayload::new);
-        LODESTONE_CHANNEL.playToClient(registrar, "update_world_event", UpdateWorldEventPayload.class, UpdateWorldEventPayload::new);
-        LODESTONE_CHANNEL.playToClient(registrar, "screenshake", ScreenshakePayload.class, ScreenshakePayload::new);
-        LODESTONE_CHANNEL.playToClient(registrar, "particle_effect", NetworkedParticleEffectPayload.class, NetworkedParticleEffectPayload::new);
-
+        LodestonePayloads.register(new ClientPayloadRegistrar() {
+            @Override
+            public <T extends OneSidedPayloadData> void register(String name, Class<T> payloadClass, Function<RegistryFriendlyByteBuf, T> decoder) {
+                LODESTONE_CHANNEL.playToClient(registrar, name, payloadClass, decoder::apply);
+            }
+        });
     }
 
-    //TODO: This was all written as a way to ignore the Codec-ification of packets.
-    // By now, I think Codec based packets are pretty cool. Having some support for that would be nice.
     /**
      * Network channels function as a database of payload types.
      * Payload Data that extends {@link LodestoneNetworkPayloadData} will use a resource location to first figure out which channel they belong to using the namespace, and the payload type using the path.
@@ -43,31 +47,31 @@ public class LodestoneNetworkPayloads {
      */
     public record LodestonePayloadRegistryHelper(String namespace) {
 
-        public static final HashMap<Class<? extends LodestoneNetworkPayloadData>, CustomPacketPayload.Type<? extends LodestoneNetworkPayloadData>> PAYLOAD_TO_TYPE = new HashMap<>();
+        public static final HashMap<Class<? extends LodestoneNetworkPayloadData>, CustomPacketPayload.Type<? extends LodestoneNetworkPayloadData>> PAYLOAD_TO_TYPE = PayloadTypes.PAYLOAD_TO_TYPE;
 
         public <T extends OneSidedPayloadData> void playToClient(PayloadRegistrar registrar, String name, Class<T> clazz, PayloadDataSupplier<T> decoder) {
-            var type = createPayloadType(clazz, name);
-            var codec = createStreamCodec(decoder);
-            registrar.playToClient(type, codec, OneSidedPayloadData::handle);
+            CustomPacketPayload.Type<T> type = createPayloadType(clazz, name);
+            StreamCodec<RegistryFriendlyByteBuf, T> codec = createStreamCodec(decoder);
+            registrar.playToClient(type, codec, (payload, context) -> payload.handle(new NeoForgePayloadContext(context)));
         }
 
         public <T extends OneSidedPayloadData> void playToServer(PayloadRegistrar registrar, String name, Class<T> clazz, PayloadDataSupplier<T> decoder) {
-            var type = createPayloadType(clazz, name);
-            var codec = createStreamCodec(decoder);
-            registrar.playToServer(type, codec, OneSidedPayloadData::handle);
+            CustomPacketPayload.Type<T> type = createPayloadType(clazz, name);
+            StreamCodec<RegistryFriendlyByteBuf, T> codec = createStreamCodec(decoder);
+            registrar.playToServer(type, codec, (payload, context) -> payload.handle(new NeoForgePayloadContext(context)));
         }
 
         public <T extends TwoSidedPayloadData> void playBidirectional(PayloadRegistrar registrar, String name, Class<T> clazz, PayloadDataSupplier<T> decoder) {
-            var type = createPayloadType(clazz, name);
+            CustomPacketPayload.Type<T> type = createPayloadType(clazz, name);
 
-            var codec = createStreamCodec(decoder);
+            StreamCodec<RegistryFriendlyByteBuf, T> codec = createStreamCodec(decoder);
             registrar.playBidirectional(type, codec, new DirectionalPayloadHandler<>(
-                    TwoSidedPayloadData::handleClient,
-                    TwoSidedPayloadData::handleServer));
+                    (payload, context) -> payload.handleClient(new NeoForgePayloadContext(context)),
+                    (payload, context) -> payload.handleServer(new NeoForgePayloadContext(context))));
         }
 
         public <T extends LodestoneNetworkPayloadData> StreamCodec<RegistryFriendlyByteBuf, T> createStreamCodec(PayloadDataSupplier<T> supplier) {
-            return StreamCodec.ofMember(serializePayload(), deserializePayload(supplier));
+            return PayloadCodecs.codec(namespace, supplier::deserializePayload);
         }
 
         public <B extends RegistryFriendlyByteBuf, T extends LodestoneNetworkPayloadData> StreamMemberEncoder<B, T> serializePayload() {
@@ -85,9 +89,7 @@ public class LodestoneNetworkPayloads {
         }
 
         public <T extends LodestoneNetworkPayloadData> CustomPacketPayload.Type<T> createPayloadType(Class<T> clazz, String id) {
-            CustomPacketPayload.Type<T> type = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(namespace, id));
-            PAYLOAD_TO_TYPE.put(clazz, type);
-            return type;
+            return PayloadCodecs.type(namespace, id, clazz);
         }
 
     }
