@@ -21,9 +21,18 @@ loom {
     accessWidenerPath.set(file("src/main/resources/lodestone.accesswidener"))
     mixin.useLegacyMixinAp.set(false)
     runs {
+        named("client") {
+            name("Fabric - Client")
+        }
+        named("server") {
+            name("Fabric - Server")
+        }
+        configureEach {
+            ideConfigGenerated(true)
+        }
         register("datagen") {
             client()
-            name("Lodestone Data Generation")
+            name("Fabric - Data")
             vmArg("-Dfabric-api.datagen")
             vmArg("-Dfabric-api.datagen.modid=lodestone")
             vmArg("-Dfabric-api.datagen.output-dir=${rootProject.file("common/src/generated/resources").absolutePath}")
