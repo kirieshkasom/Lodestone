@@ -6,6 +6,7 @@
     "CameraScreenshakeMixin",
     "FabricFogCacheMixin",
     "FabricParticleCommandSuggestionsMixin",
+    "FabricParticleRenderOrderMixin",
     "FabricRenderPhaseMixin",
     "ScreenParticleRenderTickMixin"
   ],
