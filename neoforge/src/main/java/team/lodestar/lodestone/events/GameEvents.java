@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.events;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.*;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -40,11 +41,13 @@ public class GameEvents {
 
     @SubscribeEvent
     public static void entityJoin(EntityJoinLevelEvent event) {
-        WorldEventHandler.playerJoin(event);
+        if (event.getEntity() instanceof ServerPlayer player) {
+            WorldEventHandler.playerJoin(player);
+        }
     }
 
     @SubscribeEvent
     public static void worldTick(LevelTickEvent.Post event) {
-        WorldEventHandler.worldTick(event);
+        WorldEventHandler.worldTick(event.getLevel());
     }
 }

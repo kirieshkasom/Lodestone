@@ -5,11 +5,10 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
-import team.lodestar.lodestone.events.types.worldevent.WorldEventRenderEvent;
+import team.lodestar.lodestone.internal.worldevent.WorldEventRenderCallbackAccess;
 import team.lodestar.lodestone.modules.rendering.*;
 import team.lodestar.lodestone.registry.client.LodestoneWorldEventRenderers;
-import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
+import team.lodestar.lodestone.internal.worldevent.WorldEventStorageAccess;
 
 public class WorldEventRenderHandler {
 
@@ -18,13 +17,13 @@ public class WorldEventRenderHandler {
         poseStack.pushPose();
         poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 
-        var worldData = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+        WorldEventAttachment worldData = WorldEventStorageAccess.get(level);
         for (WorldEventInstance instance : worldData.activeWorldEvents) {
             WorldEventRenderer<WorldEventInstance> renderer = LodestoneWorldEventRenderers.RENDERERS.get(instance.type);
             if (renderer != null) {
                 if (renderer.canRender(instance)) {
                     MultiBufferSource.BufferSource target = LodestoneRenderingSystem.DEFERRED_RENDER.getTarget();
-                    NeoForge.EVENT_BUS.post(new WorldEventRenderEvent(instance, renderer, poseStack, target, partialTicks));
+                    WorldEventRenderCallbackAccess.render(instance, renderer, poseStack, target, partialTicks);
                     renderer.render(instance, poseStack, target, partialTicks);
                 }
             }

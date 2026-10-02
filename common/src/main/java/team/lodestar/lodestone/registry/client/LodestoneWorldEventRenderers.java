@@ -7,7 +7,7 @@ import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 import java.util.HashMap;
 
 /**
- * Register renderers in FMLClientSetupEvent.
+ * Stores renderers for client world-event types.
  */
 public class LodestoneWorldEventRenderers {
     public static HashMap<WorldEventType, WorldEventRenderer<WorldEventInstance>> RENDERERS = new HashMap<>();

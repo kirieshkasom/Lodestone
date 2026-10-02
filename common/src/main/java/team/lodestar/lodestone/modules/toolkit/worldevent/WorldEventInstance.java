@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import team.lodestar.lodestone.internal.network.LodestoneNetworking;
 import org.jetbrains.annotations.*;
-import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
+import team.lodestar.lodestone.internal.worldevent.LodestoneWorldEventRegistry;
 
 import java.util.UUID;
 
@@ -87,7 +87,7 @@ public abstract class WorldEventInstance {
     @ApiStatus.Internal
     public final WorldEventInstance deserializeNBT(CompoundTag tag) {
         uuid = tag.getUUID("uuid");
-        type = LodestoneWorldEventTypes.WORLD_EVENT_TYPE_REGISTRY.get(ResourceLocation.parse(tag.getString("type")));
+        type = LodestoneWorldEventRegistry.registry().get(ResourceLocation.parse(tag.getString("type")));
         discarded = tag.getBoolean("discarded");
         frozen = tag.getBoolean("frozen");
         this.readAdditionalSaveData(tag);

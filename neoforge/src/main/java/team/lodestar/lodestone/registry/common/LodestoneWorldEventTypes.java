@@ -4,16 +4,21 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import team.lodestar.lodestone.internal.LodestoneCommon;
+import team.lodestar.lodestone.internal.worldevent.LodestoneWorldEventRegistry;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
 import java.util.List;
 
 public class LodestoneWorldEventTypes {
-
-    public static ResourceKey<Registry<WorldEventType>> WORLD_EVENT_TYPE_KEY = ResourceKey.createRegistryKey(LodestoneCommon.lodestonePath("world_event_type"));
+    public static final ResourceKey<Registry<WorldEventType>> WORLD_EVENT_TYPE_KEY = LodestoneWorldEventRegistry.KEY;
     public static final DeferredRegister<WorldEventType> WORLD_EVENT_TYPES = createRegistry(LodestoneCommon.LODESTONE);
-    public static final Registry<WorldEventType> WORLD_EVENT_TYPE_REGISTRY = WORLD_EVENT_TYPES.makeRegistry(builder -> builder.sync(true));
+    public static final Registry<WorldEventType> WORLD_EVENT_TYPE_REGISTRY = createRegistryAndInstall();
 
+    private static Registry<WorldEventType> createRegistryAndInstall() {
+        Registry<WorldEventType> registry = WORLD_EVENT_TYPES.makeRegistry(builder -> builder.sync(true));
+        LodestoneWorldEventRegistry.install(registry);
+        return registry;
+    }
 
     /**
      * Creates a new world event type registry for the given mod ID.
@@ -26,6 +31,6 @@ public class LodestoneWorldEventTypes {
     }
 
     public static List<WorldEventType> getEventTypes() {
-        return WORLD_EVENT_TYPE_REGISTRY.stream().toList();
+        return LodestoneWorldEventRegistry.getEventTypes();
     }
 }

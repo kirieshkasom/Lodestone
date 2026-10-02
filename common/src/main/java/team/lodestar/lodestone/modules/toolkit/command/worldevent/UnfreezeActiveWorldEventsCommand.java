@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventAttachment;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventInstanceArgument;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventTypeArgument;
-import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
+import team.lodestar.lodestone.internal.worldevent.WorldEventStorageAccess;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventInstance;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
@@ -25,7 +25,7 @@ public class UnfreezeActiveWorldEventsCommand {
                 // Unfreeze all active world events
                 .then(Commands.literal("all")
                         .executes(ctx -> {
-                            WorldEventAttachment worldEventAttachment = ctx.getSource().getLevel().getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                            WorldEventAttachment worldEventAttachment = WorldEventStorageAccess.get(ctx.getSource().getLevel());
                             List<WorldEventInstance> activeWorldEvents = worldEventAttachment.activeWorldEvents;
                             List<WorldEventInstance> currentlyFrozen = activeWorldEvents.stream().filter(WorldEventInstance::isFrozen).toList();
                             if (currentlyFrozen.isEmpty()) {
@@ -59,7 +59,7 @@ public class UnfreezeActiveWorldEventsCommand {
                         .then(Commands.argument("type", WorldEventTypeArgument.worldEventType())
                                 .executes(ctx -> {
                                     WorldEventType type = WorldEventTypeArgument.getEventType(ctx, "type");
-                                    WorldEventAttachment worldEventAttachment = ctx.getSource().getLevel().getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                                    WorldEventAttachment worldEventAttachment = WorldEventStorageAccess.get(ctx.getSource().getLevel());
                                     List<WorldEventInstance> activeWorldEvents = worldEventAttachment.activeWorldEvents.stream().filter(instance -> instance.type == type).toList();
                                     List<WorldEventInstance> currentlyFrozen = activeWorldEvents.stream().filter(WorldEventInstance::isFrozen).toList();
                                     if (currentlyFrozen.isEmpty()) {

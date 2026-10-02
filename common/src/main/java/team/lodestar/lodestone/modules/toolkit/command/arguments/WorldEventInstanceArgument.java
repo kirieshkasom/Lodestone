@@ -7,18 +7,17 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.CommandSourceStack;
+import team.lodestar.lodestone.internal.worldevent.WorldEventCommandContext;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventAttachment;
-import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
+import team.lodestar.lodestone.internal.worldevent.WorldEventStorageAccess;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventInstance;
 
 import java.util.Set;
@@ -54,14 +53,14 @@ public class WorldEventInstanceArgument implements ArgumentType<WorldEventInstan
 
             try {
                 UUID uuid = UUID.fromString(s1);
-                MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+                MinecraftServer server = WorldEventCommandContext.server();
                 if (server == null) return null;
                 Set<ResourceKey<Level>> levels = server.registryAccess().registry(Registries.DIMENSION).get().registryKeySet();
                 levels.forEach(levelResourceKey -> {
                     if (levelResourceKey == null) return;
                     Level level = server.getLevel(levelResourceKey);
                     if (level == null) return;
-                    WorldEventAttachment data = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                    WorldEventAttachment data = WorldEventStorageAccess.get(level);
                     data.activeWorldEvents.stream()
                             .filter(worldEventInstance -> worldEventInstance.uuid.equals(uuid))
                             .findFirst()
@@ -80,21 +79,23 @@ public class WorldEventInstanceArgument implements ArgumentType<WorldEventInstan
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        S s = context.getSource();
-        if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
-            sharedsuggestionprovider.levels().forEach(levelResourceKey -> {
-                if (levelResourceKey == null) return;
-                Level level = Minecraft.getInstance().level;
-                if (level == null) return;
-                WorldEventAttachment data = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
-                data.activeWorldEvents.forEach(worldEventInstance -> {
-                    builder.suggest(worldEventInstance.uuid.toString());
-                });
-            });
+        S source = context.getSource();
+        if (source instanceof CommandSourceStack commandSource) {
+            for (ServerLevel level : commandSource.getServer().getAllLevels()) {
+                suggest(level, builder);
+            }
+        } else if (source instanceof SharedSuggestionProvider) {
+            Level level = WorldEventCommandContext.clientLevel();
+            if (level != null) {
+                suggest(level, builder);
+            }
         }
         return builder.buildFuture();
     }
 
+    private static void suggest(Level level, SuggestionsBuilder builder) {
+        WorldEventAttachment data = WorldEventStorageAccess.get(level);
+        data.activeWorldEvents.forEach(instance -> builder.suggest(instance.uuid.toString()));
+    }
 }

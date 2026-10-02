@@ -9,7 +9,7 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
+import team.lodestar.lodestone.internal.worldevent.LodestoneWorldEventRegistry;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class WorldEventTypeArgument implements ArgumentType<WorldEventType> {
     @Override
     public WorldEventType parse(StringReader reader) throws CommandSyntaxException {
         ResourceLocation resourceLocation = ResourceLocation.read(reader);
-        WorldEventType worldEventType = LodestoneWorldEventTypes.WORLD_EVENT_TYPE_REGISTRY.get(resourceLocation);
+        WorldEventType worldEventType = LodestoneWorldEventRegistry.registry().get(resourceLocation);
         if (worldEventType != null) {
             return worldEventType;
         } else {
@@ -41,7 +41,7 @@ public class WorldEventTypeArgument implements ArgumentType<WorldEventType> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        LodestoneWorldEventTypes.WORLD_EVENT_TYPE_REGISTRY.stream().filter(Objects::nonNull).forEach(type -> builder.suggest(type.id.toString()));
+        LodestoneWorldEventRegistry.registry().stream().filter(Objects::nonNull).forEach(type -> builder.suggest(type.id.toString()));
         return builder.buildFuture();
     }
 }

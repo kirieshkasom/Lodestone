@@ -4,7 +4,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import team.lodestar.lodestone.internal.network.PayloadContext;
-import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
+import team.lodestar.lodestone.internal.worldevent.WorldEventStorageAccess;
 import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
 
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class UpdateWorldEventPayload extends OneSidedPayloadData {
         context.execute(() -> {
             Level level = context.player().level();
             if (level != null) {
-                WorldEventAttachment worldData = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                WorldEventAttachment worldData = WorldEventStorageAccess.get(level);
                 for (WorldEventInstance instance : worldData.activeWorldEvents) {
                     if (instance.uuid.equals(uuid)) {
                         instance.deserializeNBT(eventData);

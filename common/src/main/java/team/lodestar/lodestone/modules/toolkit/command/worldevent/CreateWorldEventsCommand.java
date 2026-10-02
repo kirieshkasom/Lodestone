@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventTypeArgument;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventHandler;
-import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
+import team.lodestar.lodestone.internal.worldevent.LodestoneWorldEventRegistry;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
 public class CreateWorldEventsCommand {
@@ -16,7 +16,7 @@ public class CreateWorldEventsCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         var create = Commands.literal("create").requires(cs -> cs.hasPermission(2));
 
-        for (WorldEventType type : LodestoneWorldEventTypes.getEventTypes()) {
+        for (WorldEventType type : LodestoneWorldEventRegistry.getEventTypes()) {
             var typeArg = Commands.argument("type", WorldEventTypeArgument.worldEventType());
 
             if (type.commandCodec != null) {

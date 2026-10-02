@@ -11,7 +11,7 @@ import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventAttachment;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventInstanceArgument;
 import team.lodestar.lodestone.modules.toolkit.command.arguments.WorldEventTypeArgument;
 import team.lodestar.lodestone.modules.toolkit.worldevent.UpdateWorldEventPayload;
-import team.lodestar.lodestone.registry.common.LodestoneAttachmentTypes;
+import team.lodestar.lodestone.internal.worldevent.WorldEventStorageAccess;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventInstance;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventType;
 
@@ -29,7 +29,7 @@ public class RemoveActiveWorldEventsCommand {
                         .executes(ctx -> {
                             CommandSourceStack source = ctx.getSource();
                             Level level = source.getLevel();
-                            WorldEventAttachment worldEventAttachment = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                            WorldEventAttachment worldEventAttachment = WorldEventStorageAccess.get(level);
                             int count = worldEventAttachment.activeWorldEvents.size();
                             worldEventAttachment.activeWorldEvents.forEach(instance -> endAndUpdate(instance, level));
                             if (count > 0) {
@@ -58,7 +58,7 @@ public class RemoveActiveWorldEventsCommand {
                                     CommandSourceStack source = ctx.getSource();
                                     Level level = source.getLevel();
                                     WorldEventType type = WorldEventTypeArgument.getEventType(ctx, "type");
-                                    WorldEventAttachment worldEventAttachment = level.getData(LodestoneAttachmentTypes.WORLD_EVENT_DATA);
+                                    WorldEventAttachment worldEventAttachment = WorldEventStorageAccess.get(level);
                                     int count;
                                     List<WorldEventInstance> activeWorldEvents = worldEventAttachment.activeWorldEvents.stream().filter(instance -> instance.type == type).toList();
                                     count = activeWorldEvents.size();

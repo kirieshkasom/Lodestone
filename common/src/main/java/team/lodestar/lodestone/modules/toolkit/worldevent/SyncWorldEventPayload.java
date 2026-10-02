@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.*;
 import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.internal.network.PayloadContext;
-import team.lodestar.lodestone.registry.common.LodestoneWorldEventTypes;
+import team.lodestar.lodestone.internal.worldevent.LodestoneWorldEventRegistry;
 import team.lodestar.lodestone.systems.network.OneSidedPayloadData;
 
 public class SyncWorldEventPayload extends OneSidedPayloadData {
@@ -31,7 +31,7 @@ public class SyncWorldEventPayload extends OneSidedPayloadData {
     @Override
     public void handle(PayloadContext context) {
         context.execute(() -> {
-            WorldEventType eventType = LodestoneWorldEventTypes.WORLD_EVENT_TYPE_REGISTRY.get(type);
+            WorldEventType eventType = LodestoneWorldEventRegistry.registry().get(type);
             Level level = context.player().level();
             WorldEventHandler.addWorldEvent(level, start, eventType.createInstance(eventData));
         });
