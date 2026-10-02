@@ -1,9 +1,8 @@
 package team.lodestar.lodestone.handlers;
 
-import net.minecraft.client.*;
-import net.minecraft.client.multiplayer.*;
-import net.minecraft.util.*;
-import net.neoforged.neoforge.client.event.*;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.util.RandomSource;
 import team.lodestar.lodestone.modules.core.easing.*;
 import team.lodestar.lodestone.modules.toolkit.screenshake.*;
 
@@ -16,14 +15,23 @@ public class ScreenshakeHandler {
 
     private static float intensity;
 
-    public static void computeAngles(ViewportEvent.ComputeCameraAngles event) {
-        RandomSource random = Minecraft.getInstance().level.getRandom();
+    public static void applyCameraJitter(RandomSource random, CameraAngles angles) {
         if (intensity > 0) {
             float yaw = Easing.SINE_IN_OUT.asWeighedRandom(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
             float pitch = Easing.SINE_IN_OUT.asWeighedRandom(random, 0, intensity * 2) * (random.nextBoolean() ? 1 : -1);
-            event.setYaw(event.getYaw() + yaw);
-            event.setPitch(event.getPitch() + pitch);
+            angles.setYaw(angles.getYaw() + yaw);
+            angles.setPitch(angles.getPitch() + pitch);
         }
+    }
+
+    public interface CameraAngles {
+        float getYaw();
+
+        float getPitch();
+
+        void setYaw(float yaw);
+
+        void setPitch(float pitch);
     }
 
     public static void clientTick(ClientLevel level, Camera camera) {

@@ -9,6 +9,7 @@ import team.lodestar.lodestone.handlers.screenparticle.ScreenParticleHandler;
 import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.registry.client.LodestoneModels;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
+import team.lodestar.lodestone.modules.rendering.handlers.ModelHandler;
 import team.lodestar.lodestone.systems.rendering.renderpass.RenderPassHandler;
 
 import java.util.function.Consumer;
@@ -37,6 +38,7 @@ public final class LodestoneClientLifecycle {
     public static void shutdown() {
         LodestoneRenderSystem.wrap(() -> {
             LodestoneModels.cleanup();
+            ModelHandler.shutdownEvent();
             LodestoneRenderSystem.destroyBufferObjects();
             RenderPassHandler.close();
             LodestoneCommon.LOGGER.info("Shutting down Lodestone");

@@ -1,22 +1,16 @@
 package team.lodestar.lodestone.modules.rendering.handlers;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-import net.neoforged.neoforge.event.GameShuttingDownEvent;
 import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
 import team.lodestar.lodestone.modules.rendering.model.geo.BedrockGeometryModel;
 import team.lodestar.lodestone.modules.rendering.model.obj.ObjModel;
 
 import javax.annotation.Nullable;
+import team.lodestar.lodestone.systems.asset.ReloadListener;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = LodestoneCommon.LODESTONE, value = Dist.CLIENT)
 public class ModelHandler {
     private static final Map<ResourceLocation, IRenderableModel> MODELS = new HashMap<>();
     private static boolean initializedClient = false;
@@ -72,23 +66,18 @@ public class ModelHandler {
         return (T) model;
     }
 
-    @SubscribeEvent
-    public static void clientInit(FMLClientSetupEvent event) {
+    public static void clientInit() {
         initializedClient = true;
         for (IRenderableModel model : MODELS.values()) {
             model.loadModel();
         }
     }
 
-    @SubscribeEvent
-    public static void registerReloadListener(RegisterClientReloadListenersEvent event) {
-        for (IRenderableModel model : MODELS.values()) {
-            model.loadModel();
-        }
+    public static ReloadListener reloadListener() {
+        return new ReloadListener(() -> MODELS.values().forEach(IRenderableModel::loadModel));
     }
 
-    @SubscribeEvent
-    public static void shutdownEvent(GameShuttingDownEvent event) {
+    public static void shutdownEvent() {
         for (IRenderableModel model : MODELS.values()) {
             model.cleanup();
         }

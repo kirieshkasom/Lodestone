@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleOptions;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleHolder;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleItemStackKey;
@@ -47,7 +46,7 @@ public class ScreenParticleHandler {
         canSpawnParticles = true;
     }
 
-    public static void renderTick(RenderFrameEvent.Post event) {
+    public static void renderTick() {
         canSpawnParticles = false;
     }
 

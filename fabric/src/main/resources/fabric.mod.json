@@ -11,7 +11,7 @@
     "main": ["team.lodestar.lodestone.fabric.LodestoneFabric"],
     "client": ["team.lodestar.lodestone.fabric.LodestoneFabricClient"]
   },
-  "mixins": ["lodestone.mixins.json"],
+  "mixins": ["lodestone.mixins.json", "lodestone.fabric.mixins.json"],
   "accessWidener": "lodestone.accesswidener",
   "depends": {
     "fabricloader": ">=0.16.10",

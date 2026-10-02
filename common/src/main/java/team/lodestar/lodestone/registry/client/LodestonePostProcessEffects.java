@@ -1,10 +1,6 @@
 package team.lodestar.lodestone.registry.client;
 
 import net.minecraft.client.Minecraft;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessor;
@@ -12,7 +8,6 @@ import team.lodestar.lodestone.modules.rendering.postprocess.effects.*;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = LodestoneCommon.LODESTONE, value = Dist.CLIENT)
 public class LodestonePostProcessEffects {
     public static final BloomPostProcessor BLOOM = register(BloomPostProcessor::new);
     public static final PhysicallyBasedBloomPostProcessor PB_BLOOM = register(PhysicallyBasedBloomPostProcessor::new);
@@ -21,8 +16,7 @@ public class LodestonePostProcessEffects {
         return Minecraft.getInstance() == null ? null : supplier.get();
     }
 
-    @SubscribeEvent
-    public static void setupPostProcessEffects(FMLClientSetupEvent event) {
+    public static void setupPostProcessEffects() {
         PostProcessHandler.addInstance(BLOOM);
         PostProcessHandler.addInstance(PB_BLOOM);
     }

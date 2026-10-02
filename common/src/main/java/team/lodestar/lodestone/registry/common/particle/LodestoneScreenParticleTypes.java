@@ -3,7 +3,6 @@ package team.lodestar.lodestone.registry.common.particle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleOptions;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleType;
@@ -20,7 +19,7 @@ public class LodestoneScreenParticleTypes {
     public static final ScreenParticleType<ScreenParticleOptions> TWINKLE = registerType(new LodestoneScreenParticleType());
     public static final ScreenParticleType<ScreenParticleOptions> STAR = registerType(new LodestoneScreenParticleType());
 
-    public static void registerParticleFactory(RegisterParticleProvidersEvent event) {//TODO maybe use event?
+    public static void registerParticleFactory() {
         registerProvider(WISP, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("wisp"))));
         registerProvider(SMOKE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("smoke"))));
         registerProvider(SPARKLE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("sparkle"))));

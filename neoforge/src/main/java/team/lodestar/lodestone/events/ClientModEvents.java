@@ -7,6 +7,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import team.lodestar.lodestone.internal.client.LodestoneClientLifecycle;
+import team.lodestar.lodestone.internal.client.LodestoneClientReloads;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import team.lodestar.lodestone.modules.rendering.handlers.ModelHandler;
+import team.lodestar.lodestone.registry.client.LodestonePostProcessEffects;
 import team.lodestar.lodestone.registry.common.particle.*;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.type.LodestoneItemCrumbsParticleType;
 import team.lodestar.lodestone.modules.rendering.particle.standard.world.type.LodestoneTerrainParticleType;
@@ -18,12 +22,21 @@ public class ClientModEvents {
     @SubscribeEvent
     public static void registerParticleFactory(RegisterParticleProvidersEvent event) {
         registerParticleProviders(event);
-        LodestoneScreenParticleTypes.registerParticleFactory(event);
+        LodestoneScreenParticleTypes.registerParticleFactory();
     }
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-        LodestoneClientLifecycle.initialize();
+        event.enqueueWork(() -> {
+            LodestoneClientLifecycle.initialize();
+            ModelHandler.clientInit();
+            LodestonePostProcessEffects.setupPostProcessEffects();
+        });
+    }
+
+    @SubscribeEvent
+    public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+        LodestoneClientReloads.register((id, listener) -> event.registerReloadListener(listener));
     }
 
     private static void registerParticleProviders(RegisterParticleProvidersEvent event) {

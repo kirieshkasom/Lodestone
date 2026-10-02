@@ -21,6 +21,11 @@ import team.lodestar.lodestone.internal.client.LodestoneClientLifecycle;
 public class ClientGameEvents {
 
     @SubscribeEvent
+    public static void registerCommands(RegisterClientCommandsEvent event) {
+        team.lodestar.lodestone.registry.client.LodestoneClientCommands.registerCommands(event.getDispatcher());
+    }
+
+    @SubscribeEvent
     public static void clientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         LodestoneClientLifecycle.clientTick(minecraft, WorldEventHandler::tick);
@@ -28,7 +33,31 @@ public class ClientGameEvents {
 
     @SubscribeEvent
     public static void cameraSetup(ViewportEvent.ComputeCameraAngles event) {
-        ScreenshakeHandler.computeAngles(event);
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
+        }
+        ScreenshakeHandler.applyCameraJitter(level.getRandom(), new ScreenshakeHandler.CameraAngles() {
+            @Override
+            public float getYaw() {
+                return event.getYaw();
+            }
+
+            @Override
+            public float getPitch() {
+                return event.getPitch();
+            }
+
+            @Override
+            public void setYaw(float yaw) {
+                event.setYaw(yaw);
+            }
+
+            @Override
+            public void setPitch(float pitch) {
+                event.setPitch(pitch);
+            }
+        });
     }
 
     @SubscribeEvent
@@ -66,9 +95,7 @@ public class ClientGameEvents {
 
     @SubscribeEvent
     public static void renderFrameEvent(RenderFrameEvent.Post event) {
-        if (event != null) {
-            ScreenParticleHandler.renderTick(event);
-        }
+        ScreenParticleHandler.renderTick();
     }
 
     @SubscribeEvent

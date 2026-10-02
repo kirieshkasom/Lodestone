@@ -4,6 +4,11 @@ import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import java.util.function.Supplier;
+import java.util.Objects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -20,12 +25,19 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
 
     private static final Gson GSON = (new GsonBuilder()).create();
 
+    private final Supplier<HolderLookup.Provider> registryLookup;
+
     protected final Map<K, T> data = new HashMap<>();
     protected final Codec<T> lookupCodec;
     protected final Codec<Optional<T>> lookupOptionalCodec;
 
     public CodecBasedReloadListener(String directory) {
+        this(directory, () -> RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
+    }
+
+    public CodecBasedReloadListener(String directory, Supplier<HolderLookup.Provider> registryLookup) {
         super(GSON, directory);
+        this.registryLookup = Objects.requireNonNull(registryLookup);
         lookupCodec = getKeyCodec().xmap(this::get, this::getID);
 
         lookupOptionalCodec = LodestoneCodecs.optionalCodec(getKeyCodec()).xmap(
@@ -63,6 +75,10 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
             LodestoneCommon.LOGGER.info("Something ominous has occurred... {}, {}", location, exception);
         }
 
+    }
+
+    protected HolderLookup.Provider getRegistryLookup() {
+        return registryLookup.get();
     }
 
     public abstract Codec<K> getKeyCodec();

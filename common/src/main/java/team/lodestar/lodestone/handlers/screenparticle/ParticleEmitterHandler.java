@@ -4,7 +4,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import team.lodestar.lodestone.helpers.DataHelper;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleHolder;
 
@@ -19,10 +18,6 @@ public class ParticleEmitterHandler {
                     registerItemParticleEmitter(i, emitter);
                 }
         );
-    }
-
-    public static void registerParticleEmitters(FMLClientSetupEvent event) {
-        registerParticleEmitters();
     }
 
     public static void registerItemParticleEmitter(Item item, ItemParticleSupplier emitter) {

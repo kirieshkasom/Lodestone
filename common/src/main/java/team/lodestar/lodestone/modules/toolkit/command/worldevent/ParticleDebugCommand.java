@@ -5,7 +5,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import java.util.function.BiConsumer;
 import net.minecraft.network.chat.*;
 import team.lodestar.lodestone.modules.rendering.handlers.ParticleHandler;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePool;
@@ -21,42 +22,46 @@ public class ParticleDebugCommand {
     private static final int ITEMS_PER_PAGE = 10;
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
-        return Commands.literal("particles")
-                .then(Commands.literal("list")
-                        .executes(ctx -> executeList(ctx.getSource(), 0))
-                        .then(Commands.argument("page", IntegerArgumentType.integer(0))
-                                .executes(ctx -> executeList(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "page")))
+        return register((source, component) -> source.sendSuccess(() -> component, false), CommandSourceStack::sendFailure);
+    }
+
+    public static <S> LiteralArgumentBuilder<S> register(BiConsumer<S, Component> success, BiConsumer<S, Component> failure) {
+        return LiteralArgumentBuilder.<S>literal("particles")
+                .then(LiteralArgumentBuilder.<S>literal("list")
+                        .executes(ctx -> executeList(ctx.getSource(), 0, success))
+                        .then(RequiredArgumentBuilder.<S, Integer>argument("page", IntegerArgumentType.integer(0))
+                                .executes(ctx -> executeList(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "page"), success))
                         )
                 )
-                .then(Commands.literal("group")
-                        .then(Commands.argument("hash", StringArgumentType.word())
+                .then(LiteralArgumentBuilder.<S>literal("group")
+                        .then(RequiredArgumentBuilder.<S, String>argument("hash", StringArgumentType.word())
                                 .executes(ctx -> {
                                     String hash = StringArgumentType.getString(ctx, "hash");
                                     ParticlePoolGroup group = findGroup(hash);
                                     if (group != null) {
-                                        new ParticleReport().buildGroupDetailsPage(component -> ctx.getSource().sendSuccess(() -> component, false), group);
+                                        new ParticleReport().buildGroupDetailsPage(component -> success.accept(ctx.getSource(), component), group);
                                     } else {
-                                        ctx.getSource().sendFailure(Component.literal("Particle group not found."));
+                                        failure.accept(ctx.getSource(), Component.literal("Particle group not found."));
                                     }
                                     return 1;
                                 })
                         )
                 )
-                .then(Commands.literal("clear")
-                        .then(Commands.literal("all")
+                .then(LiteralArgumentBuilder.<S>literal("clear")
+                        .then(LiteralArgumentBuilder.<S>literal("all")
                                 .executes(ctx -> {
                                     ParticleHandler.allPoolGroups().forEach(g -> g.pools().forEach(ParticlePool::clear));
-                                    ctx.getSource().sendSuccess(() -> Component.literal("Cleared all particle pools.").withStyle(ChatFormatting.GREEN), false);
+                                    success.accept(ctx.getSource(), Component.literal("Cleared all particle pools.").withStyle(ChatFormatting.GREEN));
                                     return 1;
                                 })
                         )
-                        .then(Commands.argument("hash", StringArgumentType.word())
+                        .then(RequiredArgumentBuilder.<S, String>argument("hash", StringArgumentType.word())
                                 .executes(ctx -> {
                                     String hash = StringArgumentType.getString(ctx, "hash");
                                     ParticlePoolGroup group = findGroup(hash);
                                     if (group != null) {
                                         group.pools().forEach(ParticlePool::clear);
-                                        ctx.getSource().sendSuccess(() -> Component.literal("Cleared particle group.").withStyle(ChatFormatting.GREEN), false);
+                                        success.accept(ctx.getSource(), Component.literal("Cleared particle group.").withStyle(ChatFormatting.GREEN));
                                     }
                                     return 1;
                                 })
@@ -64,9 +69,9 @@ public class ParticleDebugCommand {
                 );
     }
 
-    private static int executeList(CommandSourceStack source, int page) {
+    private static <S> int executeList(S source, int page, BiConsumer<S, Component> success) {
         ParticleReport report = new ParticleReport();
-        report.buildInteractiveMessage(component -> source.sendSuccess(() -> component, false), page);
+        report.buildInteractiveMessage(component -> success.accept(source, component), page);
         return 1;
     }
 
