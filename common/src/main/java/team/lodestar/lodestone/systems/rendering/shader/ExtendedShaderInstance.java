@@ -1,11 +1,11 @@
 package team.lodestar.lodestone.systems.rendering.shader;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.GsonHelper;
-import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.systems.rendering.uniform.UniformData;
 import team.lodestar.lodestone.systems.rendering.uniform.UniformDataBuilder;
 
@@ -70,7 +70,7 @@ public class ExtendedShaderInstance extends ShaderInstance {
             }
             var uniform = uniformMap.get(uniformName);
             if (uniform == null) {
-                LodestoneLib.LOGGER.warn(
+                LodestoneCommon.LOGGER.warn(
                         "Shader json {} has a uniform {} that is not present in the shader instance uniform map. This may cause issues.",
                         shaderHolder.getShaderLocation(), uniformName);
                 continue;

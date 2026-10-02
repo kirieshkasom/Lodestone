@@ -1,11 +1,11 @@
 package team.lodestar.lodestone.registry.common.tag;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import team.lodestar.lodestone.*;
 
 public class LodestoneItemTags {
 
@@ -43,7 +43,7 @@ public class LodestoneItemTags {
     public static final TagKey<Item> INGOTS_COBALT = common("ingots/cobalt");
 
     public static TagKey<Item> tag(String path) {
-        return TagKey.create(Registries.ITEM, path.contains(":") ? ResourceLocation.parse(path) : LodestoneLib.lodestonePath(path));
+        return TagKey.create(Registries.ITEM, path.contains(":") ? ResourceLocation.parse(path) : LodestoneCommon.lodestonePath(path));
     }
 
     public static TagKey<Item> common(String name) {

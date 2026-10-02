@@ -9,6 +9,11 @@ version = "${property("minecraft_version")}-${property("mod_version")}" +
 
 neoForge {
     neoFormVersion = property("neoform_version").toString()
+    accessTransformers {
+        from(fileTree("src/main/resources/META-INF") {
+            include("*.cfg")
+        })
+    }
     parchment {
         mappingsVersion.set(property("parchment_mappings_version").toString())
         minecraftVersion.set(property("parchment_minecraft_version").toString())

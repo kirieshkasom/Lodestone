@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EffectInstance;
 import org.joml.Matrix4f;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public abstract class MultiInstancePostProcessor<I extends DynamicShaderFxInstan
     @Nullable
     public I addFxInstance(I instance) {
         if (instances.size() >= getMaxInstances()) {
-            LodestoneLib.LOGGER.warn("Failed to add fx instance to " + this + ": reached max instance count of " + getMaxInstances());
+            LodestoneCommon.LOGGER.warn("Failed to add fx instance to " + this + ": reached max instance count of " + getMaxInstances());
             return null;
         }
         instances.add(instance);

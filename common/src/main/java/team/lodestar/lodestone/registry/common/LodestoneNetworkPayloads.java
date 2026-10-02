@@ -9,7 +9,7 @@ import net.neoforged.fml.common.*;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.toolkit.screenshake.ScreenshakePayload;
 import team.lodestar.lodestone.modules.toolkit.worldevent.SyncWorldEventPayload;
 import team.lodestar.lodestone.modules.toolkit.worldevent.UpdateWorldEventPayload;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 @EventBusSubscriber()
 public class LodestoneNetworkPayloads {
 
-    public static final LodestonePayloadRegistryHelper LODESTONE_CHANNEL = new LodestonePayloadRegistryHelper(LodestoneLib.LODESTONE);
+    public static final LodestonePayloadRegistryHelper LODESTONE_CHANNEL = new LodestonePayloadRegistryHelper(LodestoneCommon.LODESTONE);
 
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {

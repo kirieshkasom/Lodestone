@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
+import static team.lodestar.lodestone.internal.LodestoneCommon.LODESTONE;
 
 
 public class LodestoneBlockEntities {

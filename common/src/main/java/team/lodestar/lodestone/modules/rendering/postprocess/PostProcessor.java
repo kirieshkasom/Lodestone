@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.PostPass;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 
 import java.io.IOException;
@@ -76,7 +76,7 @@ public abstract class PostProcessor {
             postChain.resize(mc.getWindow().getWidth(), mc.getWindow().getHeight());
             effects = postChain.passes.stream().map(PostPass::getEffect).toArray(EffectInstance[]::new);
         } catch (IOException | JsonParseException e) {
-            LodestoneLib.LOGGER.error("Failed to load post-processing shader: ", e);
+            LodestoneCommon.LOGGER.error("Failed to load post-processing shader: ", e);
         }
     }
 

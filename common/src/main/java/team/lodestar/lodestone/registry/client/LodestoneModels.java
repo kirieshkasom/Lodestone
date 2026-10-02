@@ -4,7 +4,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.systems.asset.ReloadListener;
 import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
 import team.lodestar.lodestone.modules.rendering.model.obj.ObjModel;
@@ -12,12 +12,12 @@ import team.lodestar.lodestone.modules.rendering.model.obj.ObjModel;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = LodestoneLib.LODESTONE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = LodestoneCommon.LODESTONE, value = Dist.CLIENT)
 public class LodestoneModels {
     public static List<IRenderableModel> MODELS = new ArrayList<>();
     private static final ReloadListener reloadListener = new ReloadListener(LodestoneModels::loadModels);
 
-    public static final ObjModel SUZANNE = register(ObjModel.Builder.of(LodestoneLib.lodestonePath("models/suzanne.obj"))
+    public static final ObjModel SUZANNE = register(ObjModel.Builder.of(LodestoneCommon.lodestonePath("models/suzanne.obj"))
             .build()
     );
     

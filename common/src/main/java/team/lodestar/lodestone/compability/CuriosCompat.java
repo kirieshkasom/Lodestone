@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.compability;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import net.neoforged.fml.ModList;
-import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.handlers.*;
 import team.lodestar.lodestone.helpers.*;
 
@@ -17,7 +17,7 @@ public class CuriosCompat {
 
     public static class LoadedOnly {
 
-        public static final ItemEventHandler.EventResponderSource CURIOS = new ItemEventHandler.EventResponderSource(LodestoneLib.lodestonePath("curios"), CurioHelper::getEquippedCurios);
+        public static final ItemEventHandler.EventResponderSource CURIOS = new ItemEventHandler.EventResponderSource(LodestoneCommon.lodestonePath("curios"), CurioHelper::getEquippedCurios);
 
         public static void init() {
             ItemEventHandler.registerLookup(CURIOS);

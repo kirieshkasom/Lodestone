@@ -5,14 +5,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessor;
 import team.lodestar.lodestone.modules.rendering.postprocess.effects.*;
 
 import java.util.function.Supplier;
 
-@EventBusSubscriber(modid = LodestoneLib.LODESTONE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = LodestoneCommon.LODESTONE, value = Dist.CLIENT)
 public class LodestonePostProcessEffects {
     public static final BloomPostProcessor BLOOM = register(BloomPostProcessor::new);
     public static final PhysicallyBasedBloomPostProcessor PB_BLOOM = register(PhysicallyBasedBloomPostProcessor::new);

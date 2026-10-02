@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.handlers;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import com.mojang.datafixers.util.*;
 import net.minecraft.resources.*;
 import net.minecraft.world.entity.*;
@@ -7,7 +8,6 @@ import net.minecraft.world.item.*;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.event.*;
 import net.neoforged.neoforge.event.entity.living.*;
-import team.lodestar.lodestone.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -19,9 +19,9 @@ public class ItemEventHandler {
 
     private static final HashSet<EventResponderSource> LOOKUPS = new HashSet<>();
 
-    public static final EventResponderSource HELD_ITEM = registerLookup(new EventResponderSource(LodestoneLib.lodestonePath("held_item"), e -> List.of(e.getMainHandItem())));
+    public static final EventResponderSource HELD_ITEM = registerLookup(new EventResponderSource(LodestoneCommon.lodestonePath("held_item"), e -> List.of(e.getMainHandItem())));
 
-    public static final EventResponderSource ARMOR = registerLookup(new EventResponderSource(LodestoneLib.lodestonePath("armor"), e -> {
+    public static final EventResponderSource ARMOR = registerLookup(new EventResponderSource(LodestoneCommon.lodestonePath("armor"), e -> {
         ArrayList<ItemStack> stacks = new ArrayList<>();
         for (ItemStack stack : e.getArmorSlots()) {
             stacks.add(stack);

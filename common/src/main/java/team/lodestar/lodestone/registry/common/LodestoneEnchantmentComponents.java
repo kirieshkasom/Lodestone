@@ -1,12 +1,12 @@
 package team.lodestar.lodestone.registry.common;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import net.minecraft.core.component.*;
 import net.minecraft.core.registries.*;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
 import net.minecraft.world.level.storage.loot.parameters.*;
 import net.neoforged.neoforge.registries.*;
-import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.modules.toolkit.enchanting.*;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class LodestoneEnchantmentComponents {
-    public static final DeferredRegister<DataComponentType<?>> ENCHANTMENT_COMPONENTS = DeferredRegister.create(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, LodestoneLib.LODESTONE);
+    public static final DeferredRegister<DataComponentType<?>> ENCHANTMENT_COMPONENTS = DeferredRegister.create(BuiltInRegistries.ENCHANTMENT_EFFECT_COMPONENT_TYPE, LodestoneCommon.LODESTONE);
 
     public static final Supplier<DataComponentType<List<LodestoneSlotBasedEnchantmentAttributeEffect>>> SLOT_BOUND_ATTRIBUTES =
             ENCHANTMENT_COMPONENTS.register("slot_bound_attributes", () ->

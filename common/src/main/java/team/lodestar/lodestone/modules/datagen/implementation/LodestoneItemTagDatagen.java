@@ -6,7 +6,7 @@ import net.minecraft.tags.*;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.datagen.providers.tag.LodestoneItemTagsSystem;
 import team.lodestar.lodestone.registry.common.tag.LodestoneItemTags;
 
@@ -18,7 +18,7 @@ import static team.lodestar.lodestone.registry.common.tag.LodestoneItemTags.*;
 @SuppressWarnings("NullableProblems")
 public class LodestoneItemTagDatagen extends LodestoneItemTagsSystem {
     public LodestoneItemTagDatagen(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockProvider, ExistingFileHelper existingFileHelper) {
-        super(output, provider, blockProvider, LodestoneLib.LODESTONE, existingFileHelper);
+        super(output, provider, blockProvider, LodestoneCommon.LODESTONE, existingFileHelper);
     }
 
     @Override

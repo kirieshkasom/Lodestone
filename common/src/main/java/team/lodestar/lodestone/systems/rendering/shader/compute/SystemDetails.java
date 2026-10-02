@@ -6,11 +6,11 @@ import net.neoforged.fml.CrashReportCallables;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.lwjgl.opengl.GL;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import static org.lwjgl.opengl.GL43.*;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneLib.LODESTONE)
+@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneCommon.LODESTONE)
 public class SystemDetails {
     private static boolean initialized = false;
     private static String VENDOR;

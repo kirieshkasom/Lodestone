@@ -5,7 +5,7 @@ import net.minecraft.nbt.*;
 
 import java.util.*;
 
-import static team.lodestar.lodestone.LodestoneLib.LOGGER;
+import static team.lodestar.lodestone.internal.LodestoneCommon.LOGGER;
 
 public class NBTHelper {
 

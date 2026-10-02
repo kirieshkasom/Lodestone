@@ -3,9 +3,9 @@ package team.lodestar.lodestone.modules.datagen.implementation;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.*;
 import net.neoforged.neoforge.data.event.*;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
-@EventBusSubscriber(modid = LodestoneLib.LODESTONE)
+@EventBusSubscriber(modid = LodestoneCommon.LODESTONE)
 public class DataGenerators {
 
     @SubscribeEvent

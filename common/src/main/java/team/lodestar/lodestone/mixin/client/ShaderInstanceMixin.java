@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.systems.rendering.shader.IShaderInstance;
 import team.lodestar.lodestone.systems.rendering.shader.LodestoneProgram;
 import team.lodestar.lodestone.systems.rendering.shader.SamplerType;
@@ -51,7 +51,7 @@ public class ShaderInstanceMixin implements IShaderInstance {
             String type1 = json.getAsJsonObject().get("type").getAsString();
             SamplerType type = SamplerType.fromString(type1);
             if (type == null) {
-                LodestoneLib.LOGGER.warn("Unknown sampler type: " + type1);
+                LodestoneCommon.LOGGER.warn("Unknown sampler type: " + type1);
             } else {
                 samplerTypeMap.put(name, type);
             }
@@ -88,7 +88,7 @@ public class ShaderInstanceMixin implements IShaderInstance {
         if (json.has("geometry")) {
             String geometry = GsonHelper.getAsString(json, "geometry");
             this.geometryProgram = lodestone$getOrCreate(resourceProvider, LodestoneProgram.Type.GEOMETRY, geometry);
-            LodestoneLib.LOGGER.info("Loaded geometry program: " + geometry);
+            LodestoneCommon.LOGGER.info("Loaded geometry program: " + geometry);
         }
     }
 
@@ -107,7 +107,7 @@ public class ShaderInstanceMixin implements IShaderInstance {
     public void close(CallbackInfo ci) {
         if (this.geometryProgram != null) {
             this.geometryProgram.close();
-            LodestoneLib.LOGGER.info("Closed geometry program: " + this.geometryProgram.getName());
+            LodestoneCommon.LOGGER.info("Closed geometry program: " + this.geometryProgram.getName());
             this.geometryProgram = null;
         }
     }
@@ -136,7 +136,7 @@ public class ShaderInstanceMixin implements IShaderInstance {
                             try (Reader reader = resourceProvider.openAsReader(resourcelocation)) {
                                 return IOUtils.toString(reader);
                             } catch (IOException ioexception) {
-                                LodestoneLib.LOGGER.error("Could not open GLSL import {}: {}", resourcelocation, ioexception.getMessage());
+                                LodestoneCommon.LOGGER.error("Could not open GLSL import {}: {}", resourcelocation, ioexception.getMessage());
                                 return "#error " + ioexception.getMessage();
                             }
                         }

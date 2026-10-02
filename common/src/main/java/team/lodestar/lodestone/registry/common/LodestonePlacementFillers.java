@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import team.lodestar.lodestone.modules.toolkit.worldgen.filter.ChancePlacementFilter;
 import team.lodestar.lodestone.modules.toolkit.worldgen.filter.DimensionPlacementFilter;
 
-import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
+import static team.lodestar.lodestone.internal.LodestoneCommon.LODESTONE;
 
 public class LodestonePlacementFillers {
 

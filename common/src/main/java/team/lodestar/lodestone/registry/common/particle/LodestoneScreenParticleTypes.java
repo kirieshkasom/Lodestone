@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleOptions;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.ScreenParticleType;
 import team.lodestar.lodestone.modules.rendering.particle.standard.screen.LodestoneScreenParticleType;
@@ -21,11 +21,11 @@ public class LodestoneScreenParticleTypes {
     public static final ScreenParticleType<ScreenParticleOptions> STAR = registerType(new LodestoneScreenParticleType());
 
     public static void registerParticleFactory(RegisterParticleProvidersEvent event) {//TODO maybe use event?
-        registerProvider(WISP, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneLib.lodestonePath("wisp"))));
-        registerProvider(SMOKE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneLib.lodestonePath("smoke"))));
-        registerProvider(SPARKLE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneLib.lodestonePath("sparkle"))));
-        registerProvider(TWINKLE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneLib.lodestonePath("twinkle"))));
-        registerProvider(STAR, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneLib.lodestonePath("star"))));
+        registerProvider(WISP, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("wisp"))));
+        registerProvider(SMOKE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("smoke"))));
+        registerProvider(SPARKLE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("sparkle"))));
+        registerProvider(TWINKLE, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("twinkle"))));
+        registerProvider(STAR, new LodestoneScreenParticleType.Factory(getSpriteSet(LodestoneCommon.lodestonePath("star"))));
     }
 
     public static <T extends ScreenParticleOptions> ScreenParticleType<T> registerType(ScreenParticleType<T> type) {

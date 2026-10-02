@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.registry.client;
 
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.ParticleVisualType;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.billboard.BillboardVisualConfig;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.billboard.BillboardVisualRuntime;
@@ -19,7 +19,7 @@ public class LodestoneParticleVisuals {
     private static final Map<ParticleVisualType<?>, Integer> IDS = new HashMap<>();
 
     public static final ParticleVisualType<BillboardVisualConfig> BILLBOARD = LodestoneParticleVisuals.register(
-            ParticleVisualType.<BillboardVisualConfig>builder(LodestoneLib.lodestonePath("billboard"))
+            ParticleVisualType.<BillboardVisualConfig>builder(LodestoneCommon.lodestonePath("billboard"))
                     .configFactory(BillboardVisualConfig::new)
                     .runtimeFactory(BillboardVisualRuntime::new)
                     .renderStage(RenderLevelStageEvent.Stage.AFTER_PARTICLES)
@@ -27,7 +27,7 @@ public class LodestoneParticleVisuals {
     );
 
     public static final ParticleVisualType<TrailVisualConfig> TRAIL = LodestoneParticleVisuals.register(
-            ParticleVisualType.<TrailVisualConfig>builder(LodestoneLib.lodestonePath("trail"))
+            ParticleVisualType.<TrailVisualConfig>builder(LodestoneCommon.lodestonePath("trail"))
                     .configFactory(TrailVisualConfig::new)
                     .runtimeFactory(TrailVisualRuntime::new)
                     .renderStage(RenderLevelStageEvent.Stage.AFTER_PARTICLES)
@@ -35,7 +35,7 @@ public class LodestoneParticleVisuals {
     );
 
     public static final ParticleVisualType<MeshVisualConfig> MESH = LodestoneParticleVisuals.register(
-            ParticleVisualType.<MeshVisualConfig>builder(LodestoneLib.lodestonePath("mesh"))
+            ParticleVisualType.<MeshVisualConfig>builder(LodestoneCommon.lodestonePath("mesh"))
                     .configFactory(MeshVisualConfig::new)
                     .runtimeFactory(MeshVisualRuntime::new)
                     .renderStage(RenderLevelStageEvent.Stage.AFTER_PARTICLES)
@@ -43,7 +43,7 @@ public class LodestoneParticleVisuals {
     );
 
     public static final ParticleVisualType<QuadVisualConfig> QUAD = LodestoneParticleVisuals.register(
-            ParticleVisualType.<QuadVisualConfig>builder(LodestoneLib.lodestonePath("quad"))
+            ParticleVisualType.<QuadVisualConfig>builder(LodestoneCommon.lodestonePath("quad"))
                     .configFactory(QuadVisualConfig::new)
                     .runtimeFactory(QuadVisualRuntime::new)
                     .renderStage(RenderLevelStageEvent.Stage.AFTER_PARTICLES)

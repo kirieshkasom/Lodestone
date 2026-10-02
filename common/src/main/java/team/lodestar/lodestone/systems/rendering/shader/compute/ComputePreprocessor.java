@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +23,7 @@ public class ComputePreprocessor extends GlslPreprocessor {
         localSizePattern.matcher(shaderData).results().forEach(matchResult -> {
             int i = matchResult.group(2).charAt(0) - 'x';
             if (i < 0 || i > 2) {
-                LodestoneLib.LOGGER.error("Invalid local size direction found: " + matchResult.group(2).charAt(0));
+                LodestoneCommon.LOGGER.error("Invalid local size direction found: " + matchResult.group(2).charAt(0));
                 return;
             }
             localSize[i] = Integer.parseInt(matchResult.group(4));
@@ -35,7 +35,7 @@ public class ComputePreprocessor extends GlslPreprocessor {
     public List<String> process(String shaderData) {
 //        shaderData = concatPattern.matcher(shaderData).replaceAll(matchResult -> {
 //            String group = matchResult.group();
-//            LodestoneLib.LOGGER.info(group);
+//            LodestoneCommon.LOGGER.info(group);
 //            return "10";
 //        });
         return super.process(shaderData);
@@ -51,7 +51,7 @@ public class ComputePreprocessor extends GlslPreprocessor {
 
             return IOUtils.toString(resource1.open(), StandardCharsets.UTF_8);
         } catch (IOException ioexception) {
-            LodestoneLib.LOGGER.error("Could not open GLSL import {}: {}", pDirectory, ioexception.getMessage());
+            LodestoneCommon.LOGGER.error("Could not open GLSL import {}: {}", pDirectory, ioexception.getMessage());
             return "#error " + ioexception.getMessage();
         }
     }

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.systems.rendering.shader.SamplerType;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public abstract class EffectInstanceMixin {
             String type1 = json.getAsJsonObject().get("type").getAsString();
             SamplerType type = SamplerType.fromString(type1);
             if (type == null) {
-                LodestoneLib.LOGGER.warn("Unknown sampler type: " + type1);
+                LodestoneCommon.LOGGER.warn("Unknown sampler type: " + type1);
             } else {
                 samplerTypeMap.put(name, type);
             }

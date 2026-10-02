@@ -1,12 +1,12 @@
 package team.lodestar.lodestone.registry.client;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.systems.*;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.*;
 import team.lodestar.lodestone.systems.rendering.*;
 import team.lodestar.lodestone.systems.rendering.rendeertype.*;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
@@ -136,14 +136,14 @@ public class LodestoneRenderTypes extends RenderStateShard {
 
     public static final RenderType DEBUG_POS_TEX = RenderType.create("pos_tex", POSITION_TEX, QUADS, 256, RenderType.CompositeState.builder()
             .setShaderState(LodestoneShaders.DEBUG_POS_TEX.getShard())
-            .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
+            .setTextureState(new TextureStateShard(LodestoneCommon.lodestonePath("textures/painting/lefunny.png"), false, false))
             .setCullState(NO_CULL)
             .createCompositeState(false)
     );
 
     public static final RenderType DEBUG_TRAIL = RenderType.create("trail", POSITION_TEX_COLOR, TRIANGLE_STRIP, 256, RenderType.CompositeState.builder()
             .setShaderState(LodestoneShaders.DEBUG_TRAIL.getShard())
-            .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
+            .setTextureState(new TextureStateShard(LodestoneCommon.lodestonePath("textures/painting/lefunny.png"), false, false))
             .setTransparencyState(StateShards.NORMAL_TRANSPARENCY)
             .setCullState(NO_CULL)
             .createCompositeState(false)
@@ -151,7 +151,7 @@ public class LodestoneRenderTypes extends RenderStateShard {
 
     public static final RenderType DEBUG_POS_TEX_MAT = RenderType.create("pos_tex", POSITION_TEX, QUADS, 256, RenderType.CompositeState.builder()
             .setShaderState(LodestoneShaders.DEBUG_POS_TEX_MAT.getShard())
-            .setTextureState(new TextureStateShard(LodestoneLib.lodestonePath("textures/painting/lefunny.png"), false, false))
+            .setTextureState(new TextureStateShard(LodestoneCommon.lodestonePath("textures/painting/lefunny.png"), false, false))
             .setCullState(NO_CULL)
             .createCompositeState(false)
     );
@@ -243,8 +243,8 @@ public class LodestoneRenderTypes extends RenderStateShard {
                     case WriteMaskStateShard shard -> setWriteMaskState(shard);
                     case LineStateShard shard -> setLineState(shard);
                     case ColorLogicStateShard shard -> setColorLogicState(shard);
-                    case null -> LodestoneLib.LOGGER.warn("Null object passed for composite state, ignoring.");
-                    default -> LodestoneLib.LOGGER.warn("Unsupported object passed for composite state: {}, {}", object.getClass().getName(), object);
+                    case null -> LodestoneCommon.LOGGER.warn("Null object passed for composite state, ignoring.");
+                    default -> LodestoneCommon.LOGGER.warn("Unsupported object passed for composite state: {}, {}", object.getClass().getName(), object);
                 }
             }
             return this;

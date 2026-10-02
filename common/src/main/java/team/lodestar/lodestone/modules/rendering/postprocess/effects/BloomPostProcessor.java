@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.helpers.StateShardHelper;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessor;
 
@@ -20,7 +20,7 @@ public class BloomPostProcessor extends PostProcessor {
     }
     @Override
     public ResourceLocation getPostChainLocation() {
-        return LodestoneLib.lodestonePath("bloom");
+        return LodestoneCommon.lodestonePath("bloom");
     }
 
     @Override

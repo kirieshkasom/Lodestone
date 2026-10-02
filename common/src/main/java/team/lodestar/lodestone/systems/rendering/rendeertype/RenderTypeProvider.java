@@ -1,6 +1,6 @@
 package team.lodestar.lodestone.systems.rendering.rendeertype;
 
-import team.lodestar.lodestone.*;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -46,7 +46,7 @@ public class RenderTypeProvider {
         cache.put(unique, renderType);
         if (checkNuclear()) {
             hasGoneNuclear = true;
-            LodestoneLib.LOGGER.warn(
+            LodestoneCommon.LOGGER.warn(
                     "RenderTypeProvider has been called too often in a short time! This is very dangerous. " +
                             "Current count: {}, Time since last check: {}ms" +
                             "Render Type Provider: {}, Render Type Token: {}",

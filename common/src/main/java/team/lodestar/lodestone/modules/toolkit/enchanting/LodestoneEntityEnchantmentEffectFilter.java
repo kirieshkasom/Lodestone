@@ -7,7 +7,7 @@ import net.minecraft.core.component.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import javax.annotation.*;
 import java.util.List;
@@ -83,7 +83,7 @@ public class LodestoneEntityEnchantmentEffectFilter<T extends EnchantmentEntityE
 
     public Optional<T> breakDeadlock(List<T> effects) {
         if (deadlockBreaker == null) {
-            LodestoneLib.LOGGER.warn("An enchantment with two appropriate effects fit for it's query lacks a deadlock breaker. Report this to the mod dev responsible for the enchantment.");
+            LodestoneCommon.LOGGER.warn("An enchantment with two appropriate effects fit for it's query lacks a deadlock breaker. Report this to the mod dev responsible for the enchantment.");
             return Optional.empty();
         }
         return Optional.of(deadlockBreaker.apply(effects));

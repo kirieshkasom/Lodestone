@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.registry.client;
 
 import net.minecraft.resources.ResourceLocation;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.attractor.AttractorConfig;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.attractor.AttractorStorage;
 import team.lodestar.lodestone.modules.rendering.particle.pooled.component.types.boids.BoidsConfig;
@@ -22,7 +22,7 @@ public class LodestoneParticleComponents {
     private static int nextId = 0;
 
     public static final ParticleComponentType<ColorConfig> COLOR = LodestoneParticleComponents.register(
-            ParticleComponentType.<ColorConfig>builder(LodestoneLib.lodestonePath("color"))
+            ParticleComponentType.<ColorConfig>builder(LodestoneCommon.lodestonePath("color"))
                     .configFactory(ColorConfig::new)
                     .storageFactory(ColorStorage::new)
                     .phases(ParticlePhase.PRE_RENDER)
@@ -31,7 +31,7 @@ public class LodestoneParticleComponents {
     );
 
     public static final ParticleComponentType<ScaleConfig> SCALE = LodestoneParticleComponents.register(
-            ParticleComponentType.<ScaleConfig>builder(LodestoneLib.lodestonePath("scale"))
+            ParticleComponentType.<ScaleConfig>builder(LodestoneCommon.lodestonePath("scale"))
                     .configFactory(ScaleConfig::new)
                     .storageFactory(ScaleStorage::new)
                     .phases(ParticlePhase.PRE_RENDER)
@@ -40,7 +40,7 @@ public class LodestoneParticleComponents {
     );
 
     public static final ParticleComponentType<SpinConfig> SPIN = LodestoneParticleComponents.register(
-            ParticleComponentType.<SpinConfig>builder(LodestoneLib.lodestonePath("spin"))
+            ParticleComponentType.<SpinConfig>builder(LodestoneCommon.lodestonePath("spin"))
                     .configFactory(SpinConfig::new)
                     .storageFactory(SpinStorage::new)
                     .phases(ParticlePhase.PRE_RENDER)
@@ -49,7 +49,7 @@ public class LodestoneParticleComponents {
     );
 
     public static final ParticleComponentType<BoidsConfig> BOIDS = LodestoneParticleComponents.register(
-            ParticleComponentType.<BoidsConfig>builder(LodestoneLib.lodestonePath("boids"))
+            ParticleComponentType.<BoidsConfig>builder(LodestoneCommon.lodestonePath("boids"))
                     .configFactory(BoidsConfig::new)
                     .storageFactory(BoidsStorage::new)
                     .phases(ParticlePhase.PRE_UPDATE)
@@ -58,7 +58,7 @@ public class LodestoneParticleComponents {
     );
 
     public static final ParticleComponentType<AttractorConfig> ATTRACTOR = LodestoneParticleComponents.register(
-            ParticleComponentType.<AttractorConfig>builder(LodestoneLib.lodestonePath("attractor"))
+            ParticleComponentType.<AttractorConfig>builder(LodestoneCommon.lodestonePath("attractor"))
                     .configFactory(AttractorConfig::new)
                     .storageFactory(AttractorStorage::new)
                     .phases(ParticlePhase.PRE_UPDATE)

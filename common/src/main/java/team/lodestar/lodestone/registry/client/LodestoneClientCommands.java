@@ -9,7 +9,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import team.lodestar.lodestone.modules.toolkit.command.worldevent.*;
 
-import static team.lodestar.lodestone.LodestoneLib.LODESTONE;
+import static team.lodestar.lodestone.internal.LodestoneCommon.LODESTONE;
 
 @EventBusSubscriber
 public class LodestoneClientCommands {

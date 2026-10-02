@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -64,7 +64,7 @@ public class ShaderHolder implements LodestoneShader {
             ResourceProvider provider = event.getResourceProvider();
             event.registerShader(createInstance(provider), this::setShaderInstance);
         } catch (IOException e) {
-            LodestoneLib.LOGGER.error("Error registering shader", e);
+            LodestoneCommon.LOGGER.error("Error registering shader", e);
             e.printStackTrace();
         }
     }

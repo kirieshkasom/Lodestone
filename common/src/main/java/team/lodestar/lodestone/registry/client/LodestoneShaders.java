@@ -5,16 +5,16 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderRegister;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
 import team.lodestar.lodestone.systems.rendering.shader.compute.ComputeProgram;
 
-import static team.lodestar.lodestone.LodestoneLib.lodestonePath;
+import static team.lodestar.lodestone.internal.LodestoneCommon.lodestonePath;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneLib.LODESTONE)
+@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneCommon.LODESTONE)
 public class LodestoneShaders {
-    private static final ShaderRegister SHADERS = new ShaderRegister(LodestoneLib.LODESTONE);
+    private static final ShaderRegister SHADERS = new ShaderRegister(LodestoneCommon.LODESTONE);
 
     public static ShaderHolder LODESTONE_TEXTURE = SHADERS.register(new ShaderHolder(lodestonePath("lodestone_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
     public static ShaderHolder DISTORTED_TEXTURE = SHADERS.register(new ShaderHolder(lodestonePath("distorted_texture"), DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP));
@@ -40,13 +40,13 @@ public class LodestoneShaders {
     public static ShaderHolder RADIAL_DISTORTED_SCREEN_LIGHT = SHADERS.register(new ShaderHolder(lodestonePath("screen/radial_distorted_light"), DefaultVertexFormat.POSITION_TEX_COLOR));
 
     // Compute
-    public static ComputeProgram TEST = SHADERS.register(new ComputeProgram(LodestoneLib.lodestonePath("sdf")));
+    public static ComputeProgram TEST = SHADERS.register(new ComputeProgram(LodestoneCommon.lodestonePath("sdf")));
 
     // Debug
-    public static ShaderHolder DEBUG_SDF = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/sdf"), DefaultVertexFormat.POSITION));
-    public static ShaderHolder DEBUG_POS_TEX = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/pos"), DefaultVertexFormat.POSITION_TEX));
-    public static ShaderHolder DEBUG_TRAIL = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/trail"), DefaultVertexFormat.POSITION_TEX_COLOR));
-    public static ShaderHolder DEBUG_POS_TEX_MAT = SHADERS.register(new ShaderHolder(LodestoneLib.lodestonePath("debug/postex"), DefaultVertexFormat.POSITION_TEX));
+    public static ShaderHolder DEBUG_SDF = SHADERS.register(new ShaderHolder(LodestoneCommon.lodestonePath("debug/sdf"), DefaultVertexFormat.POSITION));
+    public static ShaderHolder DEBUG_POS_TEX = SHADERS.register(new ShaderHolder(LodestoneCommon.lodestonePath("debug/pos"), DefaultVertexFormat.POSITION_TEX));
+    public static ShaderHolder DEBUG_TRAIL = SHADERS.register(new ShaderHolder(LodestoneCommon.lodestonePath("debug/trail"), DefaultVertexFormat.POSITION_TEX_COLOR));
+    public static ShaderHolder DEBUG_POS_TEX_MAT = SHADERS.register(new ShaderHolder(LodestoneCommon.lodestonePath("debug/postex"), DefaultVertexFormat.POSITION_TEX));
 
     @SubscribeEvent
     public static void shaderRegistry(RegisterShadersEvent event) {

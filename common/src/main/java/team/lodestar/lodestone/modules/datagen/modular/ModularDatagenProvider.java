@@ -1,5 +1,6 @@
 package team.lodestar.lodestone.modules.datagen.modular;
 
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import com.google.common.collect.*;
 import com.google.gson.*;
 import com.mojang.datafixers.util.*;
@@ -7,7 +8,6 @@ import com.mojang.serialization.*;
 import net.minecraft.core.*;
 import net.minecraft.data.*;
 import net.minecraft.resources.*;
-import team.lodestar.lodestone.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -53,7 +53,7 @@ public class ModularDatagenProvider implements DataProvider {
                     try {
                         json  = builder.buildJson(dynamicOps, instance);
                     } catch (Exception e) {
-                        LodestoneLib.LOGGER.warn("Failed to parse data from json body: {}", builder);
+                        LodestoneCommon.LOGGER.warn("Failed to parse data from json body: {}", builder);
                     }
                     return Pair.of(json, paths.get(path).json(key));
                 }).thenComposeAsync((encoded) -> DataProvider.saveStable(cache, encoded.getFirst(), encoded.getSecond())));

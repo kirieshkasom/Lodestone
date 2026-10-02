@@ -3,7 +3,7 @@ package team.lodestar.lodestone.systems.rendering.shader;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.resources.*;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ShaderRegister {
     }
 
     public void init(RegisterShadersEvent event) {
-        LodestoneLib.LOGGER.info("Registering shaders for mod: {}", modId);
+        LodestoneCommon.LOGGER.info("Registering shaders for mod: {}", modId);
         shaders.forEach(shader -> shader.register(event));
     }
 }

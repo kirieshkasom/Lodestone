@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.helpers.StateShardHelper;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessor;
 
@@ -24,7 +24,7 @@ public class PhysicallyBasedBloomPostProcessor extends PostProcessor {
     }
     @Override
     public ResourceLocation getPostChainLocation() {
-        return LodestoneLib.lodestonePath("pb_bloom");
+        return LodestoneCommon.lodestonePath("pb_bloom");
     }
 
     @Override

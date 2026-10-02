@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":common"))
 }
 loom {
+    accessWidenerPath.set(file("src/main/resources/lodestone.accesswidener"))
     mixin.defaultRefmapName.set("lodestone.refmap.json")
     mods {
         register("lodestone") {

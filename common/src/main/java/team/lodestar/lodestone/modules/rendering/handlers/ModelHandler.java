@@ -7,7 +7,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
-import team.lodestar.lodestone.LodestoneLib;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.modules.rendering.model.IRenderableModel;
 import team.lodestar.lodestone.modules.rendering.model.geo.BedrockGeometryModel;
 import team.lodestar.lodestone.modules.rendering.model.obj.ObjModel;
@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = LodestoneLib.LODESTONE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = LodestoneCommon.LODESTONE, value = Dist.CLIENT)
 public class ModelHandler {
     private static final Map<ResourceLocation, IRenderableModel> MODELS = new HashMap<>();
     private static boolean initializedClient = false;
