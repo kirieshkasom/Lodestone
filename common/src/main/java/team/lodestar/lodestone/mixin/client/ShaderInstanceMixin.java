@@ -15,7 +15,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.GsonHelper;
-import net.neoforged.neoforge.client.ClientHooks;
+import team.lodestar.lodestone.internal.client.ShaderResources;
+import com.mojang.blaze3d.shaders.Program;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
@@ -77,19 +79,33 @@ public class ShaderInstanceMixin implements IShaderInstance {
         }
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/server/packs/resources/ResourceProvider;Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;)V",
+    @Inject(method = {
+            "<init>(Lnet/minecraft/server/packs/resources/ResourceProvider;Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;)V",
+            "<init>(Lnet/minecraft/server/packs/resources/ResourceProvider;Lnet/minecraft/resources/ResourceLocation;Lcom/mojang/blaze3d/vertex/VertexFormat;)V"
+    }, require = 0,
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/util/GsonHelper;getAsString(Lcom/google/gson/JsonObject;Ljava/lang/String;)Ljava/lang/String;",
                     ordinal = 1
             )
     )
-    private void lodestone$setGeometryProgram(ResourceProvider resourceProvider, ResourceLocation shaderLocation, VertexFormat vertexFormat, CallbackInfo ci, @Local(ordinal = 0) JsonObject json) throws IOException {
+    private void lodestone$setGeometryProgram(CallbackInfo ci, @Local(argsOnly = true) ResourceProvider resourceProvider, @Local(ordinal = 0) JsonObject json) throws IOException {
         if (json.has("geometry")) {
             String geometry = GsonHelper.getAsString(json, "geometry");
             this.geometryProgram = lodestone$getOrCreate(resourceProvider, LodestoneProgram.Type.GEOMETRY, geometry);
             LodestoneCommon.LOGGER.info("Loaded geometry program: " + geometry);
         }
+    }
+
+    @Redirect(method = "<init>(Lnet/minecraft/server/packs/resources/ResourceProvider;Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/resources/ResourceLocation;withDefaultNamespace(Ljava/lang/String;)Lnet/minecraft/resources/ResourceLocation;"), require = 0)
+    private ResourceLocation lodestone$coreShaderLocation(String path) {
+        return ShaderResources.coreLocation(path);
+    }
+
+    @Inject(method = "getOrCreate", at = @At("HEAD"), cancellable = true)
+    private static void lodestone$loadShaderProgram(ResourceProvider resources, Program.Type type, String name, CallbackInfoReturnable<Program> callback) throws IOException {
+        callback.setReturnValue(ShaderResources.getOrCreate(resources, type, name));
     }
 
     @Inject(method = "attachToProgram", at = @At("TAIL"))
@@ -129,7 +145,7 @@ public class ShaderInstanceMixin implements IShaderInstance {
                     private final Set<String> importedPaths = Sets.newHashSet();
 
                     public String applyImport(boolean p_173374_, String p_173375_) {
-                        ResourceLocation resourcelocation = ClientHooks.getShaderImportLocation(s1, p_173374_, p_173375_);
+                        ResourceLocation resourcelocation = ShaderResources.importLocation(s1, p_173374_, p_173375_);
                         if (!this.importedPaths.add(resourcelocation.toString())) {
                             return null;
                         } else {

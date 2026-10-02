@@ -1,13 +1,10 @@
 {
   "required": true,
-  "package": "team.lodestar.lodestone.mixin.client",
+  "package": "team.lodestar.lodestone.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "lodestone.refmap.json",
   "client": [
-    "CameraScreenshakeMixin",
-    "FabricFogCacheMixin",
-    "FabricRenderPhaseMixin",
-    "ScreenParticleRenderTickMixin"
+    "client.GameRendererShaderReloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

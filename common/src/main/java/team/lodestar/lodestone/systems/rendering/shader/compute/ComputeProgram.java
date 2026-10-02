@@ -4,12 +4,12 @@ import com.mojang.blaze3d.shaders.ProgramManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceProvider;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.apache.commons.io.IOUtils;
 import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.systems.rendering.IBufferObject;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderSystem;
 import team.lodestar.lodestone.systems.rendering.shader.LodestoneShader;
+import team.lodestar.lodestone.systems.rendering.shader.ShaderRegistrar;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,14 +34,16 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
     }
 
     @Override
-    public void register(RegisterShadersEvent event) {
-        loadConstraints();
-        this.loadShader(event.getResourceProvider());
+    public void register(ShaderRegistrar registrar) {
+        if (SystemDetails.isComputeSupported()) {
+            loadConstraints();
+        }
+        this.loadShader(registrar.resources());
     }
 
     private void loadShader(ResourceProvider provider) {
         var version = SystemDetails.getOpenglVersion();
-        if (version[0] < 4 || (version[0] == 4 && version[1] < 3)) {
+        if (!SystemDetails.isComputeSupported()) {
             LodestoneCommon.LOGGER.warn("Compute shaders are not supported on this system (OpenGL {}.{})", version[0], version[1]);
             return;
         }
@@ -96,6 +98,9 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
     }
 
     public static void loadConstraints() {
+        if (!SystemDetails.isComputeSupported()) {
+            return;
+        }
         for (int i = 0; i < 3; i++) {
             if (maxWorkGroupSize[i] == -1)
                 maxWorkGroupSize[i] = glGetIntegeri(GL_MAX_COMPUTE_WORK_GROUP_SIZE, i);

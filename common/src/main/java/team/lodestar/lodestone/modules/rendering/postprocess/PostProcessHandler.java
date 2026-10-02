@@ -2,12 +2,9 @@ package team.lodestar.lodestone.modules.rendering.postprocess;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import org.joml.Matrix4f;
+import team.lodestar.lodestone.modules.rendering.RenderPhase;
 import team.lodestar.lodestone.systems.asset.ReloadListener;
 
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.List;
  * Handles world-space post-processing.
  * Based on vanilla {@link net.minecraft.client.renderer.PostChain} system, but allows the shader to access the world depth buffer.
  */
-@EventBusSubscriber(value = Dist.CLIENT)
 public class PostProcessHandler {
     private static final List<PostProcessor> instances = new ArrayList<>();
     private static boolean didCopyDepth = false;
@@ -47,12 +43,11 @@ public class PostProcessHandler {
         instances.forEach(i -> i.resize(width, height));
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onWorldRenderLast(RenderLevelStageEvent event) {
-        if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_PARTICLES)) {
-            PostProcessor.viewModelMatrix = RenderSystem.getModelViewMatrix(); // Copy viewModelMatrix from RenderSystem
+    public static void renderPhase(RenderPhase phase, Matrix4f modelViewMatrix) {
+        if (phase == RenderPhase.AFTER_PARTICLES) {
+            PostProcessor.viewModelMatrix = new Matrix4f(modelViewMatrix);
         }
-        if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_LEVEL)) {
+        if (phase == RenderPhase.AFTER_LEVEL) {
             copyDepthBuffer(); // copy the depth buffer if the mixin didn't trigger
 
             render();
@@ -61,8 +56,7 @@ public class PostProcessHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void onClientSetup(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(reloadListener);
+    public static ResourceManagerReloadListener getReloadListener() {
+        return reloadListener;
     }
 }

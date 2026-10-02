@@ -1,20 +1,28 @@
 package team.lodestar.lodestone.modules.rendering;
 
-import com.mojang.blaze3d.pipeline.*;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.*;
-import net.minecraft.client.renderer.*;
-import net.neoforged.neoforge.client.event.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 import team.lodestar.lodestone.helpers.RenderHelper;
+import team.lodestar.lodestone.modules.rendering.handlers.ParticleHandler;
+import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
+import team.lodestar.lodestone.modules.rendering.texture.StencilBufferAccess;
 import team.lodestar.lodestone.systems.rendering.LodestoneRenderLayer;
 import team.lodestar.lodestone.systems.rendering.rendeertype.LodestoneRenderType;
 import team.lodestar.lodestone.systems.rendering.shader.ExtendedShaderInstance;
+import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventRenderHandler;
 
-import java.util.*;
+import java.util.Optional;
 
 /**
  * A handler responsible for all the backend rendering processes.
@@ -46,6 +54,25 @@ public class LodestoneRenderingSystem {
         DEFERRED_RENDER.endBatches();
         LATE_DEFERRED_RENDER.endBatches();
         restoreFogData();
+    }
+
+    public static void renderPhase(RenderPhase phase, PoseStack poseStack, Camera camera, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
+        ParticleHandler.render(phase, partialTicks, modelViewMatrix, projectionMatrix);
+        if (phase == RenderPhase.AFTER_SKY) {
+            ClientLevel level = Minecraft.getInstance().level;
+            if (level != null) {
+                WorldEventRenderHandler.renderWorldEvents(level, poseStack, camera, partialTicks);
+            }
+        }
+        if (phase == RenderPhase.AFTER_PARTICLES) {
+            PostProcessHandler.renderPhase(phase, modelViewMatrix);
+        }
+        if (phase == RenderPhase.AFTER_WEATHER) {
+            render();
+        }
+        if (phase == RenderPhase.AFTER_LEVEL) {
+            PostProcessHandler.renderPhase(phase, modelViewMatrix);
+        }
     }
 
     public static void cacheModelViewMatrix(Matrix4f modelViewMatrix) {
@@ -80,21 +107,21 @@ public class LodestoneRenderingSystem {
     }
 
     public static void enableStencil() {
-        if (Minecraft.getInstance().getMainRenderTarget().isStencilEnabled()) {
-            LODESTONE_DEPTH_CACHE.enableStencil();
+        if (StencilBufferAccess.isStencilEnabled(Minecraft.getInstance().getMainRenderTarget())) {
+            StencilBufferAccess.enableStencil(LODESTONE_DEPTH_CACHE);
         }
     }
 
-    public static void cacheFogData(ViewportEvent.RenderFog event) {
-        FOG_NEAR = event.getNearPlaneDistance();
-        FOG_FAR = event.getFarPlaneDistance();
-        FOG_SHAPE = event.getFogShape();
+    public static void cacheFogData(float near, float far, FogShape shape) {
+        FOG_NEAR = near;
+        FOG_FAR = far;
+        FOG_SHAPE = shape;
     }
 
-    public static void cacheFogColors(ViewportEvent.ComputeFogColor event) {
-        FOG_RED = event.getRed();
-        FOG_GREEN = event.getGreen();
-        FOG_BLUE = event.getBlue();
+    public static void cacheFogColors(float red, float green, float blue) {
+        FOG_RED = red;
+        FOG_GREEN = green;
+        FOG_BLUE = blue;
     }
 
     public static void applyCachedFogData() {

@@ -65,34 +65,6 @@ public class ClientGameEvents {
         ItemEventHandler.addAttributeTooltips(event);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void renderFog(ViewportEvent.RenderFog event) {
-        LodestoneRenderingSystem.cacheFogData(event);
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void fogColors(ViewportEvent.ComputeFogColor event) {
-        LodestoneRenderingSystem.cacheFogColors(event);
-    }
-
-    /**
-     * The main render loop of Lodestone. We end all of our batches here.
-     */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void renderStages(RenderLevelStageEvent event) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Camera camera = minecraft.gameRenderer.getMainCamera();
-        float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
-        PoseStack poseStack = event.getPoseStack();
-        if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_SKY)) {
-            WorldEventRenderHandler.renderWorldEvents(minecraft.level, poseStack, camera, partial);
-        }
-
-        if (event.getStage().equals(RenderLevelStageEvent.Stage.AFTER_WEATHER)) {
-            LodestoneRenderingSystem.render();
-        }
-    }
-
     @SubscribeEvent
     public static void renderFrameEvent(RenderFrameEvent.Post event) {
         ScreenParticleHandler.renderTick();

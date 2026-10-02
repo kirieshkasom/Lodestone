@@ -22,7 +22,8 @@
     "modules.core.client.LevelRendererMixin",
     "modules.core.client.MultiPlayerGameModeMixin",
     "modules.toolkit.client.AbstractContainerScreenMixin",
-    "modules.toolkit.client.CreativeModeInventoryScreenMixin"
+    "modules.toolkit.client.CreativeModeInventoryScreenMixin",
+    "client.RenderTargetStencilMixin"
   ],
   "injectors": {
     "defaultRequire": 1

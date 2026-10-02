@@ -1,18 +1,15 @@
 package team.lodestar.lodestone.registry.client;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import team.lodestar.lodestone.internal.LodestoneCommon;
-import team.lodestar.lodestone.systems.rendering.shader.ShaderRegister;
 import team.lodestar.lodestone.systems.rendering.shader.ShaderHolder;
+import team.lodestar.lodestone.systems.rendering.shader.ShaderRegistrar;
+import team.lodestar.lodestone.systems.rendering.shader.ShaderRegister;
 import team.lodestar.lodestone.systems.rendering.shader.compute.ComputeProgram;
+import team.lodestar.lodestone.systems.rendering.shader.compute.SystemDetails;
 
 import static team.lodestar.lodestone.internal.LodestoneCommon.lodestonePath;
 
-@EventBusSubscriber(value = Dist.CLIENT, modid = LodestoneCommon.LODESTONE)
 public class LodestoneShaders {
     private static final ShaderRegister SHADERS = new ShaderRegister(LodestoneCommon.LODESTONE);
 
@@ -48,8 +45,8 @@ public class LodestoneShaders {
     public static ShaderHolder DEBUG_TRAIL = SHADERS.register(new ShaderHolder(LodestoneCommon.lodestonePath("debug/trail"), DefaultVertexFormat.POSITION_TEX_COLOR));
     public static ShaderHolder DEBUG_POS_TEX_MAT = SHADERS.register(new ShaderHolder(LodestoneCommon.lodestonePath("debug/postex"), DefaultVertexFormat.POSITION_TEX));
 
-    @SubscribeEvent
-    public static void shaderRegistry(RegisterShadersEvent event) {
-        SHADERS.init(event);
+    public static void shaderRegistry(ShaderRegistrar registrar) {
+        SystemDetails.init();
+        SHADERS.init(registrar);
     }
 }

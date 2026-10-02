@@ -3,7 +3,6 @@ package team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.m
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -27,7 +26,7 @@ public class MeshBatchRenderer implements ParticleVisualBatchRenderer {
     private int instanceVbo = -1;
 
     @Override
-    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTicks, Matrix4f viewMat, Matrix4f projMat) {
+    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, float partialTicks, Matrix4f viewMat, Matrix4f projMat) {
         RenderType renderType = key.renderType();
         VertexBuffer meshBuffer = key.vertexBuffer();
         InstanceFormat instanceFormat = key.instanceFormat();
@@ -43,7 +42,7 @@ public class MeshBatchRenderer implements ParticleVisualBatchRenderer {
         if (totalInstances == 0) return;
 
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        float pt = partialTicks.getGameTimeDeltaPartialTick(false);
+        float pt = partialTicks;
         int strideFloats = instanceFormat.totalFloats();
 
         FloatBuffer instanceData = MemoryUtil.memAllocFloat(totalInstances * strideFloats);

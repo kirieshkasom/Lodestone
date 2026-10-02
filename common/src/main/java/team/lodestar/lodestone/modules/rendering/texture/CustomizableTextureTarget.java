@@ -5,7 +5,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.neoforged.neoforge.common.NeoForgeConfig;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -42,15 +41,17 @@ public class CustomizableTextureTarget extends RenderTarget {
                 GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, 0);
                 GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-                if (!this.isStencilEnabled()) {
+                if (!StencilBufferAccess.isStencilEnabled(this)) {
                     GlStateManager._texImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, this.width, this.height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, null);
                 } else {
                     GlStateManager._texImage2D(GL_TEXTURE_2D, 0, GL_DEPTH32F_STENCIL8, this.width, this.height, 0, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
                 }
             }
 
-            this.setFilterMode(GL_NEAREST, true);
+            this.setFilterMode(GL_NEAREST);
             GlStateManager._bindTexture(this.colorTextureId);
+            GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             GlStateManager._texParameter(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             //GlStateManager._texImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
@@ -59,13 +60,10 @@ public class CustomizableTextureTarget extends RenderTarget {
             GlStateManager._glBindFramebuffer(GL_FRAMEBUFFER, this.frameBufferId);
             GlStateManager._glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this.colorTextureId, 0);
             if (this.useDepth) {
-                if (!this.isStencilEnabled()) {
+                if (!StencilBufferAccess.isStencilEnabled(this)) {
                     GlStateManager._glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this.depthBufferId, 0);
-                } else if (NeoForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
-                    GlStateManager._glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, this.depthBufferId, 0);
                 } else {
-                    GlStateManager._glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, this.depthBufferId, 0);
-                    GlStateManager._glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, this.depthBufferId, 0);
+                    StencilBufferAccess.attachStencilTexture(this);
                 }
             }
 

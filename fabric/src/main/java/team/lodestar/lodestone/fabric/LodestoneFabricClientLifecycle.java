@@ -13,6 +13,7 @@ import team.lodestar.lodestone.internal.LodestoneCommon;
 import team.lodestar.lodestone.internal.client.LodestoneClientLifecycle;
 import team.lodestar.lodestone.modules.toolkit.worldevent.WorldEventHandler;
 import team.lodestar.lodestone.modules.rendering.handlers.ModelHandler;
+import team.lodestar.lodestone.modules.rendering.handlers.ParticleHandler;
 import team.lodestar.lodestone.registry.client.LodestonePostProcessEffects;
 import team.lodestar.lodestone.registry.common.particle.LodestoneScreenParticleTypes;
 
@@ -34,8 +35,14 @@ public final class LodestoneFabricClientLifecycle {
                 refreshScreenParticleFactories = true;
             }
         });
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((minecraft, level) -> LodestoneFabric.WORLD_EVENT_STORAGE.clearClient());
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, minecraft) -> LodestoneFabric.WORLD_EVENT_STORAGE.clearClient());
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((minecraft, level) -> {
+            LodestoneFabric.WORLD_EVENT_STORAGE.clearClient();
+            ParticleHandler.clearClientParticles();
+        });
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, minecraft) -> {
+            LodestoneFabric.WORLD_EVENT_STORAGE.clearClient();
+            ParticleHandler.clearClientParticles();
+        });
         ClientLifecycleEvents.CLIENT_STARTED.register(minecraft -> {
             LodestoneClientLifecycle.initialize();
             ModelHandler.clientInit();
@@ -44,6 +51,9 @@ public final class LodestoneFabricClientLifecycle {
         });
         ClientTickEvents.END_CLIENT_TICK.register(minecraft -> {
             LodestoneClientLifecycle.clientTick(minecraft, WorldEventHandler::tick);
+            if (minecraft.level != null && !minecraft.isPaused()) {
+                ParticleHandler.tickClientParticles();
+            }
             if (refreshScreenParticleFactories) {
                 refreshScreenParticleFactories = false;
                 LodestoneScreenParticleTypes.registerParticleFactory();

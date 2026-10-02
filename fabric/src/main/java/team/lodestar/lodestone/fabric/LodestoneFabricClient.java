@@ -13,6 +13,7 @@ import team.lodestar.lodestone.internal.client.LodestoneClientReloads;
 public final class LodestoneFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        LodestoneFabricRenderEvents.install();
         FabricParticleProviders.register();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
             LiteralCommandNode<FabricClientCommandSource> command = dispatcher.register(LiteralArgumentBuilder.<FabricClientCommandSource>literal("lodec")

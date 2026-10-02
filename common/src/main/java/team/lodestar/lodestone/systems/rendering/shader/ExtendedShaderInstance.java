@@ -38,7 +38,7 @@ public class ExtendedShaderInstance extends ShaderInstance {
     protected final UniformData defaultUniforms;
 
     public ExtendedShaderInstance(ResourceProvider pResourceProvider, ShaderHolder shaderHolder) throws IOException {
-        super(pResourceProvider, shaderHolder.getShaderLocation(), shaderHolder.getShaderFormat());
+        super(pResourceProvider, shaderHolder.getShaderLocation().toString(), shaderHolder.getShaderFormat());
         this.shaderHolder = shaderHolder;
         var jsonLocation = shaderHolder.getShaderLocation().withPath(p -> "shaders/core/" + p + ".json");
         try (Reader reader = pResourceProvider.openAsReader(jsonLocation)) {

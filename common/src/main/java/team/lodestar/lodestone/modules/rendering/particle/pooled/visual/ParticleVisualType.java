@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.modules.rendering.particle.pooled.visual;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import team.lodestar.lodestone.modules.rendering.RenderPhase;
 
 import java.util.function.Supplier;
 
@@ -9,13 +9,13 @@ public class ParticleVisualType<T> {
     private final ResourceLocation id;
     private final Supplier<T> configFactory;
     private final ParticleVisualRuntimeFactory<T> runtimeFactory;
-    private final RenderLevelStageEvent.Stage renderStage;
+    private final RenderPhase renderPhase;
 
     private ParticleVisualType(Builder<T> builder) {
         this.id = builder.id;
         this.configFactory = builder.configFactory;
         this.runtimeFactory = builder.runtimeFactory;
-        this.renderStage = builder.renderStage;
+        this.renderPhase = builder.renderPhase;
     }
 
     public ResourceLocation getId() {
@@ -30,8 +30,8 @@ public class ParticleVisualType<T> {
         return runtimeFactory.create(config);
     }
 
-    public RenderLevelStageEvent.Stage renderStage() { // TODO: this
-        return renderStage;
+    public RenderPhase renderPhase() {
+        return renderPhase;
     }
 
     public static <T> Builder<T> builder(ResourceLocation id) {
@@ -42,7 +42,7 @@ public class ParticleVisualType<T> {
         private ResourceLocation id;
         private Supplier<T> configFactory;
         private ParticleVisualRuntimeFactory<T> runtimeFactory;
-        private RenderLevelStageEvent.Stage renderStage = RenderLevelStageEvent.Stage.AFTER_PARTICLES;
+        private RenderPhase renderPhase = RenderPhase.AFTER_PARTICLES;
 
         private Builder(ResourceLocation id) {
             this.id = id;
@@ -58,8 +58,8 @@ public class ParticleVisualType<T> {
             return this;
         }
 
-        public Builder<T> renderStage(RenderLevelStageEvent.Stage renderStage) {
-            this.renderStage = renderStage;
+        public Builder<T> renderPhase(RenderPhase renderPhase) {
+            this.renderPhase = renderPhase;
             return this;
         }
 

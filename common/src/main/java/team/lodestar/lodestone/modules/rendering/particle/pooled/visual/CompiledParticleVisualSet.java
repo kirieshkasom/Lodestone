@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.modules.rendering.particle.pooled.visual;
 
 import team.lodestar.lodestone.modules.rendering.particle.pooled.pool.ParticlePool;
+import team.lodestar.lodestone.modules.rendering.RenderPhase;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,13 +33,16 @@ public class CompiledParticleVisualSet {
         return runtimes.isEmpty();
     }
 
-    public void collect(ParticlePool pool, ParticleVisualCollectContext context) {
+    public void collect(ParticlePool pool, ParticleVisualCollectContext context, RenderPhase phase) {
         int liveCount = pool.count();
         if (liveCount <= 0 || runtimes.isEmpty()) {
             return;
         }
 
         for (RuntimeEntry entry : runtimes) {
+            if (entry.type.renderPhase() != phase) {
+                continue;
+            }
             entry.runtime.collect(context, pool, liveCount);
         }
     }

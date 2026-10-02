@@ -1,0 +1,15 @@
+package team.lodestar.lodestone.modules.rendering;
+
+public enum RenderPhase {
+    AFTER_SKY,
+    AFTER_SOLID_BLOCKS,
+    AFTER_CUTOUT_MIPPED_BLOCKS,
+    AFTER_CUTOUT_BLOCKS,
+    AFTER_ENTITIES,
+    AFTER_BLOCK_ENTITIES,
+    AFTER_TRANSLUCENT_BLOCKS,
+    AFTER_TRIPWIRE_BLOCKS,
+    AFTER_PARTICLES,
+    AFTER_WEATHER,
+    AFTER_LEVEL
+}

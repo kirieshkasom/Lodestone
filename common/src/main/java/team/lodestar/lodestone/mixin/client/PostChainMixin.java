@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import team.lodestar.lodestone.modules.rendering.texture.CustomizableTextureTarget;
 import team.lodestar.lodestone.modules.rendering.texture.InternalTextureFormat;
+import team.lodestar.lodestone.modules.rendering.texture.StencilBufferAccess;
 
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,8 @@ public class PostChainMixin {
     private void addTempTargetWithFormat(String name, int width, int height, InternalTextureFormat internalFormat) {
         RenderTarget rendertarget = new CustomizableTextureTarget(width, height, true, internalFormat);
         rendertarget.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-        if (this.screenTarget.isStencilEnabled()) {
-            rendertarget.enableStencil();
+        if (StencilBufferAccess.isStencilEnabled(this.screenTarget)) {
+            StencilBufferAccess.enableStencil(rendertarget);
         }
 
         this.customRenderTargets.put(name, rendertarget);

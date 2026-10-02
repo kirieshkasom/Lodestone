@@ -2,7 +2,6 @@ package team.lodestar.lodestone.modules.rendering.particle.pooled.visual.types.t
 
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Matrix4f;
@@ -24,7 +23,7 @@ public class TrailBatchRenderer implements ParticleVisualBatchRenderer {
     private static float[] PERP_Z = new float[256];
 
     @Override
-    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, DeltaTracker partialTicks, Matrix4f viewMat, Matrix4f projMat) {
+    public void renderBatch(ParticleVisualBatchKey key, List<ParticleVisualSubmission> submissions, float partialTicks, Matrix4f viewMat, Matrix4f projMat) {
         RenderType renderType = key.renderType();
         renderType.setupRenderState();
 
@@ -52,7 +51,7 @@ public class TrailBatchRenderer implements ParticleVisualBatchRenderer {
         double camZ = camera.getPosition().z;
         Vector3f look = camera.getLookVector();
 
-        float pt = partialTicks.getGameTimeDeltaPartialTick(false);
+        float pt = partialTicks;
 
         for (ParticleVisualSubmission submission : submissions) {
             TrailVisualDrawData data = (TrailVisualDrawData) submission.drawData();
