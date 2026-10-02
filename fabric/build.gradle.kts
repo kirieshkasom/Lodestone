@@ -47,6 +47,8 @@ loom {
     }
 }
 tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(project(":common").extensions.getByType<SourceSetContainer>()["main"].resources)
     val modVersion = "${rootProject.property("minecraft_version")}-${rootProject.property("mod_version")}" +
         (System.getenv("BUILD_NUMBER")?.let { ".$it" } ?: "")
     inputs.property("version", modVersion)

@@ -31,7 +31,7 @@ public class LevelRendererMixin {
 
     @SuppressWarnings("DataFlowIssue")
     @Inject(method = "levelEvent", slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;stateById(I)Lnet/minecraft/world/level/block/state/BlockState;")), at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;playLocalSound(Lnet/minecraft/core/BlockPos;Lnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZ)V", ordinal = 0))
-    private void lodestone$CallExtendedBreakSound(int pType, BlockPos pPos, int pData, CallbackInfo ci, @Local(name = "blockstate1") BlockState blockState, @Local SoundType soundType) {
+    private void lodestone$CallExtendedBreakSound(int pType, BlockPos pPos, int pData, CallbackInfo ci, @Local BlockState blockState, @Local SoundType soundType) {
         if (soundType instanceof ExtendedSoundType extendedSoundType) {
             extendedSoundType.onPlayBreakSound(level, minecraft.player, pPos, blockState,
                     ((event, volume, pitch) -> level.playLocalSound(

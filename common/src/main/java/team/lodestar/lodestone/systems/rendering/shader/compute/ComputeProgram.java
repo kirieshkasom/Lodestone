@@ -50,13 +50,12 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
         this.destroy();
         try {
             this.programId = ProgramManager.createProgram();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to create compute shader program");
+            this.shader = new Shader(provider, this.shaderLocation);
+            this.attachShader(this.shader);
+            this.link();
+        } catch (Exception e) {
+            LodestoneCommon.LOGGER.error("Failed to load compute shader: " + this.shaderLocation, e);
         }
-        this.shader = new Shader(provider, this.shaderLocation);
-        this.attachShader(this.shader);
-        this.link();
     }
 
     public void bindAndDispatch(int x, int y, int z) {
