@@ -3,9 +3,9 @@ package team.lodestar.lodestone.modules.datagen.smith.itemmodel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelSystem;
+import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelBuilder;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.data.DatagenItemQuery;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.data.ItemModelSystemData;
 
@@ -26,7 +26,7 @@ public class ItemModelSmith {
 
     public static ItemModelSmith parentedItem(ResourceLocation parent, boolean useTexture) {
         return new ItemModelSmith(((item, provider) -> {
-            var name = provider.getItemName(item);
+            String name = provider.getItemName(item);
             if (useTexture) {
                 return provider.createGenericModel(item, parent, provider.getItemTexture(name));
             }
@@ -83,9 +83,9 @@ public class ItemModelSmith {
     }
 
     public List<ItemModelSmithResult> act(ItemModelSystemData data, DatagenItemQuery queried) {
-        var result = new ArrayList<ItemModelSmithResult>();
+        ArrayList<ItemModelSmithResult> result = new ArrayList<>();
         for (Item item : queried.getItems()) {
-            var entry = act(data, item);
+            Optional<ItemModelSmithResult> entry = act(data, item);
             if (entry.isEmpty()) {
                 continue;
             }
@@ -100,8 +100,8 @@ public class ItemModelSmith {
 
     public final ItemModelSmithResult act(LodestoneItemModelSystem provider, Item item) {
         preDatagen(provider, item);
-        var model = modelSupplier.act(item, provider);
-        var result = new ItemModelSmithResult(provider, item, model);
+        LodestoneItemModelBuilder model = modelSupplier.act(item, provider);
+        ItemModelSmithResult result = new ItemModelSmithResult(provider, item, model);
         postDatagen(result);
         return result;
     }
@@ -115,6 +115,6 @@ public class ItemModelSmith {
     }
 
     public interface ItemModelSupplier {
-        ItemModelBuilder act(Item item, LodestoneItemModelSystem provider);
+        LodestoneItemModelBuilder act(Item item, LodestoneItemModelSystem provider);
     }
 }

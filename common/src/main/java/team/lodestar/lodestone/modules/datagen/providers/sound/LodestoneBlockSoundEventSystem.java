@@ -1,8 +1,8 @@
 package team.lodestar.lodestone.modules.datagen.providers.sound;
 
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import team.lodestar.lodestone.modules.core.sound.*;
+import team.lodestar.lodestone.modules.datagen.providers.ResourceFileHelper;
+import team.lodestar.lodestone.modules.core.sound.RegistryReadyBlockSoundType;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ public abstract class LodestoneBlockSoundEventSystem extends LodestoneSoundEvent
 
     public static LodestoneBlockSoundEventSystem INSTANCE;
 
-    public LodestoneBlockSoundEventSystem(PackOutput packOutput, String modId, ExistingFileHelper existingFileHelper) {
+    public LodestoneBlockSoundEventSystem(PackOutput packOutput, String modId, ResourceFileHelper existingFileHelper) {
         super(packOutput, modId, existingFileHelper);
         INSTANCE = this;
     }
@@ -22,7 +22,7 @@ public abstract class LodestoneBlockSoundEventSystem extends LodestoneSoundEvent
     }
 
     public void add(RegistryReadyBlockSoundType soundType, String path, Consumer<BlockSoundEventBuilder> modifier) {
-        var builder = BlockSoundEventBuilder.create(path, soundType);
+        BlockSoundEventBuilder builder = BlockSoundEventBuilder.create(path, soundType);
         modifier.accept(builder);
         builder.addSounds();
     }

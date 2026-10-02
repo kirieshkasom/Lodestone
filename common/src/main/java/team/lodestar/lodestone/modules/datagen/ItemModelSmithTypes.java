@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.modules.datagen;
 
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import team.lodestar.lodestone.modules.datagen.model.ModelFile;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.EmptyItemModelSmith;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmith;
 
@@ -31,17 +31,17 @@ public class ItemModelSmithTypes {
     public static ItemModelSmith TRAPDOOR_ITEM = BLOCK_MODEL_ITEM.addModelParentAffix("_bottom");
 
     public static ItemModelSmith CROSS_MODEL_ITEM = new ItemModelSmith(((item, provider) -> {
-        var cross = DatagenSystemCommons.getBlockTextureFromBlockModel("cross");
+        ResourceLocation cross = DatagenSystemCommons.getBlockTextureFromBlockModel("cross");
         return provider.createGenericModel(item, GENERATED, cross);
     }));
     public static ItemModelSmith WALL_ITEM = new ItemModelSmith(((item, provider) -> {
-        var name = provider.getItemName(item);
-        var wall = DatagenSystemCommons.getBlockTextureFromBlockModel("wall");
+        String name = provider.getItemName(item);
+        ResourceLocation wall = DatagenSystemCommons.getBlockTextureFromBlockModel("wall");
         return provider.wallInventory(name, wall);
     }));
     public static ItemModelSmith FENCE_ITEM = new ItemModelSmith(((item, provider) -> {
-        var name = provider.getItemName(item);
-        var texture = DatagenSystemCommons.getBlockTextureFromBlockModel("texture");
+        String name = provider.getItemName(item);
+        ResourceLocation texture = DatagenSystemCommons.getBlockTextureFromBlockModel("texture");
         return provider.fenceInventory(name, texture);
     }));
 }

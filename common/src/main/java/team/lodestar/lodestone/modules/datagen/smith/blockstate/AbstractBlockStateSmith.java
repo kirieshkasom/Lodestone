@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.modules.datagen.smith.blockstate;
 
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import team.lodestar.lodestone.modules.datagen.model.ModelFile;
 import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.ItemModelSmithTypes;
 import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockStateSystem;
@@ -20,10 +20,10 @@ public abstract class AbstractBlockStateSmith<T extends Block> {
     }
 
     protected final void tryAct(BlockStateSystemData<?> data, ItemModelSmith itemModelSmith, Supplier<? extends Block> registryObject, BiConsumer<T, LodestoneBlockStateSystem> actor) {
-        var block = registryObject.get();
+        Block block = registryObject.get();
         if (blockClass.isInstance(block)) {
             DatagenSystemCommons.CURRENT_BLOCK = block;
-            var provider = data.provider();
+            LodestoneBlockStateSystem provider = data.provider();
             actor.accept(blockClass.cast(block), provider);
             makeItemModel(data, itemModelSmith, block);
             data.consumer().accept(registryObject);

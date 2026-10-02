@@ -15,6 +15,12 @@
     ],
     "client": [
       "team.lodestar.lodestone.fabric.LodestoneFabricClient"
+    ],
+    "fabric-datagen": [
+      "team.lodestar.lodestone.fabric.LodestoneFabricDataGeneratorEntrypoint"
+    ],
+    "preLaunch": [
+      "team.lodestar.lodestone.fabric.LodestoneFabricDatagenBootstrap"
     ]
   },
   "mixins": [

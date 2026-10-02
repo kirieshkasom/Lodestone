@@ -1,72 +1,87 @@
 package team.lodestar.lodestone.modules.datagen.providers.tag;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.*;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.BlockTagsProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import net.minecraft.world.level.block.AbstractCauldronBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.CeilingHangingSignBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
 import team.lodestar.lodestone.modules.core.datagen.LodestoneDatagenBlockData;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-
-import static net.minecraft.tags.BlockTags.*;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
-public abstract class LodestoneBlockTagsSystem extends BlockTagsProvider {
+public abstract class LodestoneBlockTagsSystem extends LodestoneTagProvider<Block> {
+    private static final TagKey<Block> STRIPPED_LOGS = commonTag("stripped_logs");
+    private static final TagKey<Block> STRIPPED_WOODS = commonTag("stripped_woods");
 
-    public LodestoneBlockTagsSystem(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, modId, existingFileHelper);
+    protected LodestoneBlockTagsSystem(PackOutput output, String modId) {
+        super(output, "block", modId + " Block Tags", block -> BuiltInRegistries.BLOCK.getKey(block));
     }
 
-    public void addTagsFromBlockProperties(Set<DeferredHolder<Block, ? extends Block>> blocks) {
-        var blockList = sorted(blocks);
-        for (Block block : blockList) {
+    public void addTagsFromBlockProperties(Collection<? extends Supplier<? extends Block>> blocks) {
+        List<? extends Block> sortedBlocks = sorted(blocks);
+        for (Block block : sortedBlocks) {
             LodestoneBlockProperties properties = (LodestoneBlockProperties) block.properties();
             LodestoneDatagenBlockData data = properties.getDatagenData();
-            for (TagKey<Block> tag : data.getTags()) {
-                tag(tag).add(block);
+            for (TagKey<Block> blockTag : data.getTags()) {
+                tag(blockTag).add(block);
             }
             addCommonTags(block);
         }
     }
 
     public void addCommonTags(Block block) {
-        addNameTag(PLANKS, block, "planks");
-        addNameTag(LOGS, block, RotatedPillarBlock.class, "log");
-        addNameTag(Tags.Blocks.STRIPPED_LOGS, block, RotatedPillarBlock.class, "log");
-        addNameTag(Tags.Blocks.STRIPPED_WOODS, block, RotatedPillarBlock.class, "stripped", "wood");
+        addNameTag(BlockTags.PLANKS, block, "planks");
+        addNameTag(BlockTags.LOGS, block, RotatedPillarBlock.class, "log");
+        addNameTag(STRIPPED_LOGS, block, RotatedPillarBlock.class, "log");
+        addNameTag(STRIPPED_WOODS, block, RotatedPillarBlock.class, "stripped", "wood");
 
-        addClassTag(BUTTONS, WOODEN_BUTTONS, block, ButtonBlock.class);
-        addClassTag(PRESSURE_PLATES, WOODEN_PRESSURE_PLATES, block, PressurePlateBlock.class);
-        addClassTag(DOORS, WOODEN_DOORS, block, DoorBlock.class);
-        addClassTag(STAIRS, WOODEN_STAIRS, block, StairBlock.class);
-        addClassTag(SLABS, WOODEN_SLABS, block, SlabBlock.class);
-        addClassTag(TRAPDOORS, WOODEN_TRAPDOORS, block, TrapDoorBlock.class);
-        addClassTag(FENCES, WOODEN_FENCES, block, FenceBlock.class);
-        addClassTag(CEILING_HANGING_SIGNS, block, CeilingHangingSignBlock.class);
-        addClassTag(WALL_HANGING_SIGNS, block, WallHangingSignBlock.class);
+        addClassTag(BlockTags.BUTTONS, BlockTags.WOODEN_BUTTONS, block, ButtonBlock.class);
+        addClassTag(BlockTags.PRESSURE_PLATES, BlockTags.WOODEN_PRESSURE_PLATES, block, PressurePlateBlock.class);
+        addClassTag(BlockTags.DOORS, BlockTags.WOODEN_DOORS, block, DoorBlock.class);
+        addClassTag(BlockTags.STAIRS, BlockTags.WOODEN_STAIRS, block, StairBlock.class);
+        addClassTag(BlockTags.SLABS, BlockTags.WOODEN_SLABS, block, SlabBlock.class);
+        addClassTag(BlockTags.TRAPDOORS, BlockTags.WOODEN_TRAPDOORS, block, TrapDoorBlock.class);
+        addClassTag(BlockTags.FENCES, BlockTags.WOODEN_FENCES, block, FenceBlock.class);
+        addClassTag(BlockTags.CEILING_HANGING_SIGNS, block, CeilingHangingSignBlock.class);
+        addClassTag(BlockTags.WALL_HANGING_SIGNS, block, WallHangingSignBlock.class);
 
-        addClassTag(SAPLINGS, block, SaplingBlock.class);
-        addClassTag(WALLS, block, WallBlock.class);
-        addClassTag(LEAVES, block, LeavesBlock.class);
-        addClassTag(STANDING_SIGNS, block, StandingSignBlock.class);
-        addClassTag(WALL_SIGNS, block, WallSignBlock.class);
-        addClassTag(CROPS, block, CropBlock.class);
-        addClassTag(FENCE_GATES, block, FenceGateBlock.class);
-        addClassTag(CAULDRONS, block, AbstractCauldronBlock.class);
+        addClassTag(BlockTags.SAPLINGS, block, SaplingBlock.class);
+        addClassTag(BlockTags.WALLS, block, WallBlock.class);
+        addClassTag(BlockTags.LEAVES, block, LeavesBlock.class);
+        addClassTag(BlockTags.STANDING_SIGNS, block, StandingSignBlock.class);
+        addClassTag(BlockTags.WALL_SIGNS, block, WallSignBlock.class);
+        addClassTag(BlockTags.CROPS, block, CropBlock.class);
+        addClassTag(BlockTags.FENCE_GATES, block, FenceGateBlock.class);
+        addClassTag(BlockTags.CAULDRONS, block, AbstractCauldronBlock.class);
 
-        addConditionTag(REPLACEABLE, block, block.defaultBlockState().canBeReplaced());
-
+        addConditionTag(BlockTags.REPLACEABLE, block, block.defaultBlockState().canBeReplaced());
     }
 
     public void addClassTag(TagKey<Block> tagKey, TagKey<Block> woodenKey, Block block, Class<? extends Block> clazz) {
@@ -89,10 +104,11 @@ public abstract class LodestoneBlockTagsSystem extends BlockTagsProvider {
         addNameTag(tagKey, block, Block.class, checks);
     }
 
-    @SuppressWarnings({"deprecation", "DataFlowIssue"})
+    @SuppressWarnings("deprecation")
     public void addNameTag(TagKey<Block> tagKey, Block block, Class<? extends Block> clazz, String... checks) {
         if (clazz.isInstance(block)) {
-            var name = block.builtInRegistryHolder().getKey().location().getPath();
+            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
+            String name = blockId.getPath();
             boolean matches = checks.length == 0 || Arrays.stream(checks).anyMatch(name::contains);
             addConditionTag(tagKey, block, matches);
         }
@@ -104,7 +120,11 @@ public abstract class LodestoneBlockTagsSystem extends BlockTagsProvider {
         }
     }
 
-    public static List<? extends Block> sorted(Set<DeferredHolder<Block, ? extends Block>> blocks) {
-        return blocks.stream().map(DeferredHolder::get).sorted(Comparator.comparingInt(BuiltInRegistries.BLOCK::getId)).toList();
+    public static List<? extends Block> sorted(Collection<? extends Supplier<? extends Block>> blocks) {
+        return blocks.stream().map(Supplier::get).sorted(Comparator.comparingInt(BuiltInRegistries.BLOCK::getId)).toList();
+    }
+
+    private static TagKey<Block> commonTag(String id) {
+        return TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", id));
     }
 }

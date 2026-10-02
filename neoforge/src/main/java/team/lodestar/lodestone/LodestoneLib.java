@@ -33,6 +33,7 @@ public class LodestoneLib {
     public static final RandomSource RANDOM = LodestoneCommon.RANDOM;
 
     public LodestoneLib(IEventBus modEventBus, ModContainer modContainer) {
+        team.lodestar.lodestone.modules.core.datagen.LodestoneDatagenBlockData.setDatagenState(net.neoforged.neoforge.data.loading.DatagenModLoader::isRunningDataGen);
         team.lodestar.lodestone.neoforge.LodestoneNeoForgeEnchantmentIteration.install();
         team.lodestar.lodestone.neoforge.NeoForgeCategorizedCreativeTabFactory.install();
         team.lodestar.lodestone.neoforge.LodestoneNeoForgeItemComponents.register(modEventBus);

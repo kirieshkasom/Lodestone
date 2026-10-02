@@ -21,7 +21,7 @@ neoForge {
 }
 sourceSets.main {
     resources.srcDir("src/generated/resources")
-    resources.exclude("META-INF/*.cfg")
+    resources.exclude("META-INF/*.cfg", ".cache/**")
 }
 repositories {
     flatDir {

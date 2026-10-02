@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import team.lodestar.lodestone.modules.core.util.BlockItemTagKey;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties.BlockRenderType;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 @SuppressWarnings("UnusedReturnValue")
 @DatagenOnly
@@ -26,18 +26,31 @@ public class LodestoneDatagenBlockData {
     public boolean noLootDatagen = false;
 
     public static LodestoneDatagenBlockData copyDatagenDataFrom(LodestoneBlockProperties from, LodestoneBlockProperties to) {
-        var copy = getDatagenData(from).copy();
-        return DATAGEN_DATA_CACHE.put(to, copy);
+        LodestoneDatagenBlockData copy = getDatagenData(from).copy();
+        DATAGEN_DATA_CACHE.put(to, copy);
+        return copy;
     }
 
     public static LodestoneDatagenBlockData getDatagenData(LodestoneBlockProperties properties) {
-        if (!DatagenModLoader.isRunningDataGen()) {
+        if (!isDatagenRunning()) {
             throw new UnsupportedOperationException("Cannot access datagen data outside of datagen");
         }
         if (DATAGEN_DATA_CACHE == null) {
             DATAGEN_DATA_CACHE = new HashMap<>();
         }
         return DATAGEN_DATA_CACHE.computeIfAbsent(properties, p -> new LodestoneDatagenBlockData());
+    }
+
+    public static boolean isDatagenRunning() {
+        return DatagenContext.isDatagenRunning();
+    }
+
+    public static void setDatagenRunning(boolean running) {
+        DatagenContext.setDatagenRunning(running);
+    }
+
+    public static void setDatagenState(BooleanSupplier state) {
+        DatagenContext.setDatagenState(state);
     }
 
     public LodestoneDatagenBlockData addTag(TagKey<Block> blockTagKey) {

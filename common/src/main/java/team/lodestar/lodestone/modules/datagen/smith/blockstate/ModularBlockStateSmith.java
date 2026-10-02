@@ -1,7 +1,7 @@
 package team.lodestar.lodestone.modules.datagen.smith.blockstate;
 
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
+import team.lodestar.lodestone.modules.datagen.model.ModelFile;
 import team.lodestar.lodestone.modules.datagen.ItemModelSmithTypes;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.ItemModelSmith;
 import team.lodestar.lodestone.modules.datagen.providers.block.LodestoneBlockStateSystem;

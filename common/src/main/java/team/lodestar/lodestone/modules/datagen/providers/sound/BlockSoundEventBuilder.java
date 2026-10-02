@@ -1,8 +1,7 @@
 package team.lodestar.lodestone.modules.datagen.providers.sound;
 
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.neoforge.common.data.SoundDefinition;
-import team.lodestar.lodestone.modules.core.sound.*;
+import team.lodestar.lodestone.modules.core.sound.RegistryReadyBlockSoundType;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -204,8 +203,8 @@ public class BlockSoundEventBuilder {
     }
 
     public SoundDefinition add(SoundOptions soundOptions, String... fallbacks) {
-        var pathOrFallback = soundOptions.soundPathReplacement == null ? path : soundOptions.soundPathReplacement;
-        var instance = LodestoneBlockSoundEventSystem.INSTANCE;
+        String pathOrFallback = soundOptions.soundPathReplacement == null ? path : soundOptions.soundPathReplacement;
+        LodestoneBlockSoundEventSystem instance = LodestoneBlockSoundEventSystem.INSTANCE;
         return instance.add(soundOptions.soundEvent,
                 s -> s.with(instance.allSounds(pathOrFallback, soundOptions.soundName, soundOptions.soundModifier, fallbacks)),
                 soundOptions.soundDefinitionModifier);

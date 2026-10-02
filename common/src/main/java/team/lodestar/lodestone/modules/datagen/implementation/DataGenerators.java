@@ -1,26 +1,15 @@
 package team.lodestar.lodestone.modules.datagen.implementation;
 
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.*;
-import net.neoforged.neoforge.data.event.*;
-import team.lodestar.lodestone.internal.LodestoneCommon;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.PackOutput;
 
-@EventBusSubscriber(modid = LodestoneCommon.LODESTONE)
-public class DataGenerators {
+import java.util.List;
 
-    @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
+public final class DataGenerators {
+    private DataGenerators() {
+    }
 
-        var lookupProvider = event.getLookupProvider();
-        var packOutput = event.getGenerator().getPackOutput();
-        var existingFileHelper = event.getExistingFileHelper();
-
-        boolean includeServer = event.includeServer();
-
-        var blockTagDatagen = new LodestoneBlockTagDatagen(packOutput, lookupProvider, existingFileHelper);
-        var itemTagDatagen = new LodestoneItemTagDatagen(packOutput, lookupProvider, blockTagDatagen.contentsGetter(), existingFileHelper);
-
-        event.getGenerator().addProvider(includeServer, blockTagDatagen);
-        event.getGenerator().addProvider(includeServer, itemTagDatagen);
+    public static List<DataProvider> createProviders(PackOutput output) {
+        return List.of(new LodestoneBlockTagDatagen(output), new LodestoneItemTagDatagen(output));
     }
 }

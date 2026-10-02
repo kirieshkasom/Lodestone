@@ -2,35 +2,35 @@ package team.lodestar.lodestone.modules.datagen.providers.block;
 
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
+import team.lodestar.lodestone.modules.datagen.model.ModelFile;
 
-@SuppressWarnings("NullableProblems")
-public class LodestoneBlockModelBuilder extends BlockModelBuilder {
-
-    public LodestoneBlockModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
-        super(outputLocation, existingFileHelper);
+public class LodestoneBlockModelBuilder extends ModelFile {
+    public LodestoneBlockModelBuilder(ResourceLocation outputLocation) {
+        super(outputLocation, new JsonObject());
     }
 
-    @Override
-    public BlockModelBuilder texture(String key, ResourceLocation path) {
-        var modified = DatagenSystemCommons.modifyTexturePath(path);
+    public LodestoneBlockModelBuilder parent(ModelFile parent) {
+        ResourceLocation location = DatagenSystemCommons.modifyModelParentPath(parent.getLocation());
+        json.addProperty("parent", location.toString());
+        return this;
+    }
+
+    public LodestoneBlockModelBuilder texture(String key, ResourceLocation path) {
+        ResourceLocation modified = DatagenSystemCommons.modifyTexturePath(path);
         DatagenSystemCommons.writeBlockTextureFromBlockModel(key, modified);
-        return super.texture(key, modified);
+        JsonObject textures = json.has("textures") ? json.getAsJsonObject("textures") : new JsonObject();
+        textures.addProperty(key, modified.toString());
+        json.add("textures", textures);
+        return this;
     }
 
-    @Override
-    public BlockModelBuilder parent(ModelFile parent) {
-        var location = parent.getLocation();
-        var modified = DatagenSystemCommons.modifyModelParentPath(location);
-        return super.parent(new UncheckedModelFile(modified));
+    public LodestoneBlockModelBuilder renderType(String renderType) {
+        json.addProperty("render_type", renderType);
+        return this;
     }
 
-    @Override
-    public JsonObject toJson() {
-
-        return super.toJson();
+    public LodestoneBlockModelBuilder renderType(ResourceLocation renderType) {
+        return renderType(renderType.toString());
     }
 }

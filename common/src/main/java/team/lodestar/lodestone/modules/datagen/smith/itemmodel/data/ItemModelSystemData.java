@@ -3,7 +3,6 @@ package team.lodestar.lodestone.modules.datagen.smith.itemmodel.data;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.datagen.providers.item.LodestoneItemModelSystem;
 import team.lodestar.lodestone.modules.datagen.smith.itemmodel.EmptyItemModelSmith;
@@ -20,10 +19,6 @@ import java.util.stream.Collectors;
 public class ItemModelSystemData {
     private final LodestoneItemModelSystem provider;
     private final Set<Item> items;
-
-    public ItemModelSystemData(LodestoneItemModelSystem provider, DeferredRegister.Items items) {
-        this(provider, items.getEntries());
-    }
 
     public ItemModelSystemData(LodestoneItemModelSystem provider, Collection<? extends Supplier<? extends Item>> items) {
         this.provider = provider;
@@ -50,7 +45,7 @@ public class ItemModelSystemData {
         if (smith instanceof EmptyItemModelSmith) {
             return Optional.empty();
         }
-        var result = smith.act(provider, item);
+        ItemModelSmithResult result = smith.act(provider, item);
         items.remove(item);
         return Optional.of(result);
     }
