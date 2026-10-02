@@ -3,11 +3,8 @@ package team.lodestar.lodestone.modules.rendering.particle.standard.screen.base;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.RandomSource;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import team.lodestar.lodestone.modules.rendering.particle.standard.render_types.LodestoneScreenParticleRenderType;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class ScreenParticle {
 
     public final ClientLevel level;

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.*;
 
-public class LodestoneRangedAttribute extends RangedAttribute {
+public class LodestoneRangedAttribute extends RangedAttribute implements LodestoneAttributeFormatting {
 
     private final ResourceLocation baseId;
 
@@ -23,18 +23,13 @@ public class LodestoneRangedAttribute extends RangedAttribute {
         this.forcePercentage = forcePercentage;
     }
 
-    @Override
     @Nullable
     public ResourceLocation getBaseId() {
         return baseId;
     }
 
-    @Override
     public @NotNull MutableComponent toValueComponent(@Nullable AttributeModifier.Operation op, double value, TooltipFlag flag) {
-        if (forcePercentage) {
-            return Component.translatable("neoforge.value.percent", FORMAT.format(value * 100));
-        }
-        return super.toValueComponent(op, value, flag);
+        return AttributeValueFormatter.format(op, value, forcePercentage);
     }
 
 }

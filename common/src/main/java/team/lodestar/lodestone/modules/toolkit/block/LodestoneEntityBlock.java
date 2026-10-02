@@ -28,6 +28,7 @@ import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityT
 import team.lodestar.lodestone.modules.toolkit.blockentity.LodestoneBlockEntityType;
 
 import java.util.function.Supplier;
+import java.util.function.BiConsumer;
 
 /**
  * A SimpleBlock is an implementation of EntityBlock that allows most frequently used logic to be handled in a SimpleBlockEntity
@@ -77,7 +78,6 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
         super.setPlacedBy(level, pos, state, placer, stack);
     }
 
-    @Override
     @NotNull
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         var blockEntity = getBlockEntity(level, pos);
@@ -87,7 +87,7 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
                 return stack;
             }
         }
-        return super.getCloneItemStack(state, target, level, pos, player);
+        return super.getCloneItemStack(level, pos, state);
     }
 
     @Override
@@ -98,9 +98,16 @@ public class LodestoneEntityBlock<T extends LodestoneBlockEntity> extends Block 
     }
 
     @Override
-    public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
-        onBlockBroken(level, pos, null);
-        super.onBlockExploded(state, level, pos, explosion);
+    protected void onExplosionHit(BlockState state, Level level, BlockPos pos, Explosion explosion, BiConsumer<ItemStack, BlockPos> dropConsumer) {
+        if (!state.isAir() && explosion.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
+            onBlockBroken(level, pos, null);
+        }
+        super.onExplosionHit(state, level, pos, explosion, dropConsumer);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return getCloneItemStack(state, null, level, pos, null);
     }
 
     public void onBlockBroken(Level level, BlockPos pos, @Nullable Player player) {

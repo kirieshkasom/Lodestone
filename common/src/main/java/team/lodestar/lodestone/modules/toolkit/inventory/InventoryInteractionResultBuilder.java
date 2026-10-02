@@ -3,8 +3,8 @@ package team.lodestar.lodestone.modules.toolkit.inventory;
 public class InventoryInteractionResultBuilder {
 
     private final InventoryInteractionResult.InteractionType interactionType;
-    private InventoryItemStackTransaction internalChange;
-    private InventoryItemStackTransaction externalChange;
+    private InventoryItemStackTransaction internalChange = InventoryItemStackTransaction.EMPTY;
+    private InventoryItemStackTransaction externalChange = InventoryItemStackTransaction.EMPTY;
 
     public InventoryInteractionResultBuilder(InventoryInteractionResult.InteractionType interactionType) {
         this.interactionType = interactionType;

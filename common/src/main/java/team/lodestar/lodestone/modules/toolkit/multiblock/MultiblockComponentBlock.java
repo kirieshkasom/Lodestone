@@ -8,13 +8,10 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import team.lodestar.lodestone.modules.toolkit.blockentity.IInventoryCapabilityProvider;
-import team.lodestar.lodestone.registry.common.*;
+import team.lodestar.lodestone.modules.toolkit.inventory.ItemInventory;
+import team.lodestar.lodestone.modules.toolkit.inventory.InventoryAccess;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneEntityBlock;
 
 import java.util.Optional;
@@ -37,16 +34,32 @@ public class MultiblockComponentBlock extends LodestoneEntityBlock<MultiBlockCom
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof MultiBlockComponentEntity provider) {
-            var optional = provider.getCore();
+            Optional<MultiBlockCoreEntity> optional = provider.getCore();
             if (optional.isEmpty()) {
                 return 0;
             }
-            var core = optional.get();
-            var capability = level.getCapability(Capabilities.ItemHandler.BLOCK, core.getBlockPos(), core.getBlockState(), core, null);
-            if (capability != null) {
-                return ItemHandlerHelper.calcRedstoneFromInventory(capability);
+            MultiBlockCoreEntity core = optional.get();
+            ItemInventory inventory = InventoryAccess.get(level, core.getBlockPos(), null);
+            if (inventory != null) {
+                return calculateRedstoneSignal(inventory);
             }
         }
         return 0;
+    }
+
+    private int calculateRedstoneSignal(ItemInventory inventory) {
+        if (inventory.getSlots() == 0) {
+            return 0;
+        }
+        float fullness = 0.0F;
+        int nonEmptySlots = 0;
+        for (int slot = 0; slot < inventory.getSlots(); slot++) {
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if (!stack.isEmpty()) {
+                fullness += (float) stack.getCount() / (float) Math.min(inventory.getSlotLimit(slot), stack.getMaxStackSize());
+                nonEmptySlots++;
+            }
+        }
+        return Math.min(15, (int) (fullness / inventory.getSlots() * 14.0F) + (nonEmptySlots > 0 ? 1 : 0));
     }
 }

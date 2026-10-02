@@ -12,11 +12,10 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.items.*;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.helpers.*;
-import team.lodestar.lodestone.registry.common.*;
 import team.lodestar.lodestone.modules.toolkit.blockentity.*;
+import team.lodestar.lodestone.modules.toolkit.inventory.ItemInventory;
 
 import java.util.Optional;
 
@@ -36,7 +35,7 @@ public class MultiBlockComponentEntity extends LodestoneBlockEntity implements I
     }
 
     @Override
-    public IItemHandler getInventory(Direction direction) {
+    public ItemInventory getInventory(Direction direction) {
         Optional<MultiBlockCoreEntity> optional = getCore();
         if (optional.isEmpty()) {
             return null;

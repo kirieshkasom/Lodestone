@@ -1,9 +1,9 @@
 package team.lodestar.lodestone.modules.toolkit.blockentity;
 
-import net.minecraft.core.*;
-import net.neoforged.neoforge.items.*;
+import net.minecraft.core.Direction;
+import team.lodestar.lodestone.modules.toolkit.inventory.ItemInventory;
 
 public interface IInventoryCapabilityProvider {
 
-    IItemHandler getInventory(Direction direction);
+    ItemInventory getInventory(Direction direction);
 }

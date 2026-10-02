@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "team.lodestar.lodestone.neoforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LodestoneToolAbilityMixin",
+    "LodestoneLogAbilityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "AbstractContainerScreenSlotHighlightMixin"
+  ]
+}

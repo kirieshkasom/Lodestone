@@ -62,7 +62,7 @@ public class ClientGameEvents {
 
     @SubscribeEvent
     public static void addAttributeTooltips(AddAttributeTooltipsEvent event) {
-        ItemEventHandler.addAttributeTooltips(event);
+        team.lodestar.lodestone.neoforge.LodestoneNeoForgeItemResponses.tooltip(event);
     }
 
     @SubscribeEvent

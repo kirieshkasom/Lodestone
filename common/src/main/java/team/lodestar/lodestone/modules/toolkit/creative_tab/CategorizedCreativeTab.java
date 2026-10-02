@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import net.minecraft.resources.*;
 import net.minecraft.world.item.*;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import team.lodestar.lodestone.modules.toolkit.creative_tab.entries.CreativeTabCategoryEntry;
 import team.lodestar.lodestone.modules.toolkit.creative_tab.slot.SlotLocation;
 import team.lodestar.lodestone.modules.toolkit.creative_tab.slot.SlotStorage;
@@ -12,7 +11,7 @@ import team.lodestar.lodestone.modules.toolkit.creative_tab.slot.SlotStorage;
 import java.util.*;
 import java.util.function.*;
 
-public abstract class CategorizedCreativeTab extends CreativeModeTab {
+public abstract class CategorizedCreativeTab {
 
     protected final String modId;
     protected final HashMap<ResourceLocation, CreativeTabCategory> categories = new LinkedHashMap<>();
@@ -23,7 +22,6 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
     protected final Int2ObjectLinkedOpenHashMap<SlotStorage> slots = new Int2ObjectLinkedOpenHashMap<>();
 
     protected CategorizedCreativeTab(String modId, CategorizedBuilder categorizedBuilder) {
-        super(categorizedBuilder);
         this.modId = modId;
         this.visualInfo = categorizedBuilder.visualInfo;
         buildCategories();
@@ -45,22 +43,23 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
         return slots.get(itemIndex);
     }
 
-    public static void buildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (!(event.getTab() instanceof CategorizedCreativeTab tab)) {
+    public static void buildCreativeTabs(CreativeModeTab tab, Consumer<ItemStack> consumer) {
+        if (!(tab instanceof CategorizedTabAccess access)) {
             return;
         }
+        CategorizedCreativeTab categorizedTab = access.categorizedTab();
         var location = new SlotLocation();
-        for (CreativeTabCategory category : tab.categories.values()) {
+        for (CreativeTabCategory category : categorizedTab.categories.values()) {
             for (CreativeTabCategoryEntry entry : category.getEntries()) {
-                var slot = entry.bake(tab, location);
+                var slot = entry.bake(categorizedTab, location);
                 if (slot == null) {
                     continue;
                 }
                 for (ItemStack storedItem : slot.getStoredItems()) {
-                    if (!tab.isItemVisible(storedItem)) {
+                    if (!categorizedTab.isItemVisible(storedItem)) {
                         continue;
                     }
-                    event.accept(storedItem);
+                    consumer.accept(storedItem);
                 }
             }
         }
@@ -99,5 +98,9 @@ public abstract class CategorizedCreativeTab extends CreativeModeTab {
 
     public static CategorizedBuilder builder(Function<CategorizedBuilder, CategorizedCreativeTab> tabFactory) {
         return new CategorizedBuilder(tabFactory, CreativeModeTab.Row.TOP, 0);
+    }
+
+    public static CategorizedBuilder builder(Function<CategorizedBuilder, CategorizedCreativeTab> tabFactory, CreativeModeTab.Row row, int column) {
+        return new CategorizedBuilder(tabFactory, row, column);
     }
 }

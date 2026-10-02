@@ -9,13 +9,11 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.*;
 import net.minecraft.world.item.enchantment.*;
 import org.apache.commons.lang3.mutable.*;
-import team.lodestar.lodestone.registry.common.*;
 
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
-import static net.neoforged.neoforge.common.util.AttributeUtil.*;
 import static team.lodestar.lodestone.modules.toolkit.enchanting.LodestoneEnchantmentDataHelper.runIterationOnItem;
 
 
@@ -96,7 +94,7 @@ public class LodestoneEnchantmentAttributeHelper {
      */
     public static float compute(ItemAttributeModifiers modifiers, Predicate<ItemAttributeModifiers.Entry> filter, double baseValue) {
         double value = baseValue;
-        var matching = findMatching(modifiers, filter);
+        Multimap<Holder<Attribute>, AttributeModifier> matching = findMatching(modifiers, filter);
         for (Map.Entry<Holder<Attribute>, AttributeModifier> entry : matching.entries()) {
             AttributeModifier modifier = entry.getValue();
             value = compute(modifier, value);
@@ -111,7 +109,11 @@ public class LodestoneEnchantmentAttributeHelper {
      * @return A Multimap of matching attribute modifiers
      */
     public static Multimap<Holder<Attribute>, AttributeModifier> findMatching(ItemAttributeModifiers modifiers, Predicate<ItemAttributeModifiers.Entry> filter) {
-        Multimap<Holder<Attribute>, AttributeModifier> map = sortedMap();
+        Multimap<Holder<Attribute>, AttributeModifier> map = TreeMultimap.create(
+                (first, second) -> first.unwrapKey().orElseThrow().location().compareTo(second.unwrapKey().orElseThrow().location()),
+                Comparator.comparing(AttributeModifier::operation)
+                        .thenComparingDouble(modifier -> -Math.abs(modifier.amount()))
+                        .thenComparing(AttributeModifier::id));
         for (ItemAttributeModifiers.Entry entry : modifiers.modifiers()) {
             if (filter.test(entry)) {
                 map.put(entry.attribute(), entry.modifier());

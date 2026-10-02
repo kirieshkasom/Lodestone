@@ -8,6 +8,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import team.lodestar.lodestone.handlers.*;
+import team.lodestar.lodestone.neoforge.LodestoneNeoForgeItemResponses;
 import team.lodestar.lodestone.modules.toolkit.enchanting.*;
 import team.lodestar.lodestone.modules.toolkit.worldevent.*;
 
@@ -16,27 +17,22 @@ public class GameEvents {
 
     @SubscribeEvent
     public static void modifyAttributes(ItemAttributeModifierEvent event) {
-        LodestoneSlotBasedEnchantmentAttributeEffect.modifyAttributes(event);
+        LodestoneSlotBasedEnchantmentAttributeEffect.modifyAttributes(event.getItemStack(), modifier -> event.addModifier(modifier.attribute(), modifier.modifier(), modifier.slot()));
     }
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        ItemEventHandler.triggerHurtResponses(event);
+        LodestoneNeoForgeItemResponses.incoming(event);
     }
 
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent.Pre event) {
-        ItemEventHandler.triggerHurtResponses(event);
+        LodestoneNeoForgeItemResponses.before(event);
     }
 
     @SubscribeEvent
     public static void onDamage(LivingDamageEvent.Post event) {
-        ItemEventHandler.triggerHurtResponses(event);
-    }
-
-    @SubscribeEvent
-    public static void onDeath(LivingDeathEvent event) {
-        ItemEventHandler.triggerDeathResponses(event);
+        LodestoneNeoForgeItemResponses.after(event);
     }
 
     @SubscribeEvent

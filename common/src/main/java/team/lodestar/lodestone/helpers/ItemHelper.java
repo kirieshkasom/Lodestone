@@ -7,9 +7,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +47,7 @@ public class ItemHelper {
 
     public static void giveItemToEntity(LivingEntity entity, ItemStack stack) {
         if (entity instanceof Player player) {
-            ItemHandlerHelper.giveItemToPlayer(player, stack);
+            player.getInventory().placeItemBackInInventory(stack);
         } else {
             spawnItemOnEntity(entity, stack);
         }
@@ -58,13 +55,8 @@ public class ItemHelper {
 
     public static void quietlyGiveItemToPlayer(Player player, ItemStack stack) {
         if (stack.isEmpty()) return;
-        IItemHandler inventory = new PlayerMainInvWrapper(player.getInventory());
         Level level = player.level();
-        ItemStack remainder = stack;
-        if (!remainder.isEmpty()) {
-            remainder = ItemHandlerHelper.insertItemStacked(inventory, remainder, false);
-        }
-        if (!remainder.isEmpty() && !level.isClientSide) {
+        if (!stack.isEmpty() && !player.getInventory().add(stack) && !level.isClientSide) {
             spawnItemOnEntity(player, stack);
         }
     }

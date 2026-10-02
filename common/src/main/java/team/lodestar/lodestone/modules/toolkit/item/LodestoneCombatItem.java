@@ -14,7 +14,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static net.neoforged.neoforge.common.ItemAbilities.SWORD_DIG;
 
 /**
  * A copy of a sword, without actually being a sword.
@@ -47,8 +46,4 @@ public class LodestoneCombatItem extends TieredItem {
         stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
     }
 
-    @Override
-    public boolean canPerformAction(ItemStack stack, net.neoforged.neoforge.common.ItemAbility itemAbility) {
-        return itemAbility.equals(SWORD_DIG);
-    }
 }

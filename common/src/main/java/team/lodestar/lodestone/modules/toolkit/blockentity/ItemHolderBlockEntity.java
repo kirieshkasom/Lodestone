@@ -10,9 +10,9 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.*;
 import org.jetbrains.annotations.Nullable;
 import team.lodestar.lodestone.modules.toolkit.inventory.LodestoneItemStackBlockHandler;
+import team.lodestar.lodestone.modules.toolkit.inventory.ItemInventory;
 
 /**
  * A simple block entity which holds a single ItemStack
@@ -25,7 +25,7 @@ public abstract class ItemHolderBlockEntity extends LodestoneBlockEntity impleme
     }
     
     @Override
-    public IItemHandler getInventory(Direction direction) {
+    public ItemInventory getInventory(Direction direction) {
         return inventory;
     }
 

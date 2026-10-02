@@ -14,6 +14,7 @@ public final class LodestoneFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LodestoneFabricRenderEvents.install();
+        LodestoneFabricBlockRenderLayers.install();
         FabricParticleProviders.register();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, access) -> {
             LiteralCommandNode<FabricClientCommandSource> command = dispatcher.register(LiteralArgumentBuilder.<FabricClientCommandSource>literal("lodec")

@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.predicates.*;
+import team.lodestar.lodestone.internal.EnchantmentIterationAccess;
 
 import javax.annotation.*;
 import java.lang.reflect.Field;
@@ -48,18 +49,11 @@ public class LodestoneEnchantmentDataHelper {
      */
     @SuppressWarnings("DataFlowIssue")
     public static void runIterationOnItem(ItemStack stack, @Nullable Holder<Enchantment> filter, EnchantmentHelper.EnchantmentVisitor visitor, BooleanSupplier breakCondition) {
-        ItemEnchantments itemenchantments = stack.getOrDefault(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY);
-
-        // We aren't NeoForge, but I want to keep this comment here
-        // Neo: Respect gameplay-only enchantments when doing iterations
-        var lookup = net.neoforged.neoforge.common.CommonHooks.resolveLookup(net.minecraft.core.registries.Registries.ENCHANTMENT);
-        if (lookup != null) {
-            itemenchantments = stack.getAllEnchantments(lookup);
-        }
+        ItemEnchantments itemenchantments = EnchantmentIterationAccess.getEnchantments(stack);
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
             Holder<Enchantment> enchantment = entry.getKey();
-            if (filter == null || filter.is(enchantment.getKey())) {
+            if (filter == null || filter.equals(enchantment) || filter.unwrapKey().equals(enchantment.unwrapKey())) {
                 visitor.accept(enchantment, entry.getIntValue());
                 if (breakCondition.getAsBoolean()) {
                     return;
@@ -291,7 +285,7 @@ public class LodestoneEnchantmentDataHelper {
     public static int getEnchantmentLevel(Level level, ResourceKey<Enchantment> key, ItemStack stack) {
         HolderGetter<Enchantment> enchantmentLookup = level.registryAccess().asGetterLookup().lookupOrThrow(Registries.ENCHANTMENT);
         if (stack != null) {
-            return stack.getEnchantmentLevel(enchantmentLookup.getOrThrow(key));
+            return EnchantmentHelper.getItemEnchantmentLevel(enchantmentLookup.getOrThrow(key), stack);
         }
         return 0;
     }

@@ -4,14 +4,25 @@
   "version": "${version}",
   "name": "Lodestone",
   "description": "A library containing various utilities.",
-  "authors": ["Lodestar"],
+  "authors": [
+    "Lodestar"
+  ],
   "license": "GPL-3.0-only",
   "environment": "*",
   "entrypoints": {
-    "main": ["team.lodestar.lodestone.fabric.LodestoneFabric"],
-    "client": ["team.lodestar.lodestone.fabric.LodestoneFabricClient"]
+    "main": [
+      "team.lodestar.lodestone.fabric.LodestoneFabric"
+    ],
+    "client": [
+      "team.lodestar.lodestone.fabric.LodestoneFabricClient"
+    ]
   },
-  "mixins": ["lodestone.mixins.json", "lodestone.fabric.mixins.json", "lodestone.fabric.shader.mixins.json"],
+  "mixins": [
+    "lodestone.mixins.json",
+    "lodestone.fabric.mixins.json",
+    "lodestone.fabric.shader.mixins.json",
+    "lodestone.fabric.gameplay.mixins.json"
+  ],
   "accessWidener": "lodestone.accesswidener",
   "depends": {
     "fabricloader": ">=0.16.10",

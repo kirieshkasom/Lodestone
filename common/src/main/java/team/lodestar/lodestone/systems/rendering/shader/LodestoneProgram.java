@@ -5,8 +5,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
 import com.mojang.blaze3d.shaders.Shader;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +15,6 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL32.*;
 
-@OnlyIn(Dist.CLIENT)
 public class LodestoneProgram {
     private static final int MAX_LOG_LENGTH = 32768;
     private final Type type;
@@ -78,8 +75,7 @@ public class LodestoneProgram {
         return this.id;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public enum Type {
+        public enum Type {
         VERTEX("vertex", ".vsh", GL_VERTEX_SHADER),
         FRAGMENT("fragment", ".fsh", GL_FRAGMENT_SHADER),
         GEOMETRY("geometry", ".gsh", GL_GEOMETRY_SHADER);

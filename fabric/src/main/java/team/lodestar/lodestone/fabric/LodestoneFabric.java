@@ -35,6 +35,10 @@ public final class LodestoneFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        team.lodestar.lodestone.fabric.inventory.FabricInventoryAdapter.register();
+        FabricCreativeTabEvents.register();
+        FabricCategorizedCreativeTabFactory.install();
+        team.lodestar.lodestone.internal.registration.LodestoneItemComponents.register(new FabricRegistryRegistrar<>(BuiltInRegistries.DATA_COMPONENT_TYPE));
         WorldEventCommandContext.serverSupplier(() -> server);
         WorldEventStorageAccess.install(WORLD_EVENT_STORAGE);
         WorldEventCallbackAccess.install(new FabricWorldEventCallbacks());

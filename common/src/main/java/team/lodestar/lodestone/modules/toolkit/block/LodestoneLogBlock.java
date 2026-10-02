@@ -4,8 +4,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -23,13 +21,10 @@ public class LodestoneLogBlock extends RotatedPillarBlock {
         this(properties, null);
     }
 
-    @Override
-    public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility itemAbility, boolean simulate) {
-        if (stripped != null) {
-            if (itemAbility.equals(ItemAbilities.AXE_STRIP)) {
-                return stripped.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
-            }
+    public @Nullable BlockState getStrippedState(BlockState state) {
+        if (stripped == null) {
+            return null;
         }
-        return super.getToolModifiedState(state, context, itemAbility, simulate);
+        return stripped.get().defaultBlockState().setValue(AXIS, state.getValue(AXIS));
     }
 }

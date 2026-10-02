@@ -3,29 +3,40 @@ package team.lodestar.lodestone.helpers;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.SlotResult;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
-import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
-import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-@SuppressWarnings("unused")
-public class CurioHelper {
+public final class CurioHelper {
+    private static Provider provider = new Provider() {
+        @Override
+        public List<EquippedCurio> equipped(LivingEntity entity) {
+            return List.of();
+        }
 
-    //TODO: we will be temporarily moving this into malum while we figure out what we wanna do with the non-rendering half of lodestone
-    public static Optional<SlotResult> getEquippedCurio(LivingEntity entity, Predicate<ItemStack> predicate) {
-        return CuriosApi.getCuriosInventory(entity).flatMap(iCuriosItemHandler -> iCuriosItemHandler.findFirstCurio(predicate));
+        @Override
+        public Optional<ImmutableTriple<String, Integer, ItemStack>> cosmetic(Predicate<ItemStack> filter, LivingEntity entity) {
+            return Optional.empty();
+        }
+    };
+
+    private CurioHelper() {
     }
 
-    public static Optional<SlotResult> getEquippedCurio(LivingEntity entity, Item curio) {
-        return CuriosApi.getCuriosInventory(entity).flatMap(iCuriosItemHandler -> iCuriosItemHandler.findFirstCurio(stack -> stack.getItem() == curio));
+    public static void install(Provider provider) {
+        CurioHelper.provider = Objects.requireNonNull(provider);
+    }
+
+    public static Optional<EquippedCurio> getEquippedCurio(LivingEntity entity, Predicate<ItemStack> predicate) {
+        return provider.equipped(entity).stream().filter(curio -> predicate.test(curio.stack())).findFirst();
+    }
+
+    public static Optional<EquippedCurio> getEquippedCurio(LivingEntity entity, Item curio) {
+        return getEquippedCurio(entity, stack -> stack.is(curio));
     }
 
     public static boolean hasCurioEquipped(LivingEntity entity, Item curio) {
@@ -33,60 +44,29 @@ public class CurioHelper {
     }
 
     public static ArrayList<ItemStack> getEquippedCurios(LivingEntity entity) {
-        Optional<IItemHandlerModifiable> optional = CuriosApi.getCuriosInventory(entity).map(ICuriosItemHandler::getEquippedCurios);
-        ArrayList<ItemStack> stacks = new ArrayList<>();
-        if (optional.isPresent()) {
-            IItemHandlerModifiable handler = optional.get();
-            for (int i = 0; i < handler.getSlots(); i++) {
-                stacks.add(handler.getStackInSlot(i));
-            }
-        }
-        return stacks;
+        return getEquippedCurios(entity, stack -> true);
     }
 
     public static ArrayList<ItemStack> getEquippedCurios(LivingEntity entity, Predicate<ItemStack> predicate) {
-        Optional<IItemHandlerModifiable> optional = CuriosApi.getCuriosInventory(entity).map(ICuriosItemHandler::getEquippedCurios);
         ArrayList<ItemStack> stacks = new ArrayList<>();
-        if (optional.isPresent()) {
-            IItemHandlerModifiable handler = optional.get();
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack stack = handler.getStackInSlot(i);
-                if (predicate.test(stack)) {
-                    stacks.add(stack);
-                }
+        for (EquippedCurio curio : provider.equipped(entity)) {
+            if (predicate.test(curio.stack())) {
+                stacks.add(curio.stack());
             }
         }
         return stacks;
     }
 
-    public static Optional<ImmutableTriple<String, Integer, ItemStack>> findCosmeticCurio(Predicate<ItemStack> filter, LivingEntity livingEntity) {
-        ImmutableTriple<String, Integer, ItemStack> result = CuriosApi.getCuriosInventory(livingEntity).map(handler ->
-        {
-            Map<String, ICurioStacksHandler> curios = handler.getCurios();
+    public static Optional<ImmutableTriple<String, Integer, ItemStack>> findCosmeticCurio(Predicate<ItemStack> filter, LivingEntity entity) {
+        return provider.cosmetic(filter, entity);
+    }
 
-            for (String id : curios.keySet()) {
-                ICurioStacksHandler stacksHandler = curios.get(id);
-                IDynamicStackHandler stackHandler = stacksHandler.getStacks();
-                IDynamicStackHandler cosmeticStackHelper = stacksHandler.getCosmeticStacks();
+    public record EquippedCurio(String identifier, int index, ItemStack stack) {
+    }
 
-                for (int i = 0; i < stackHandler.getSlots(); i++) {
-                    ItemStack stack = stackHandler.getStackInSlot(i);
+    public interface Provider {
+        List<EquippedCurio> equipped(LivingEntity entity);
 
-                    if (!stack.isEmpty() && filter.test(stack)) {
-                        return new ImmutableTriple<>(id, i, stack);
-                    }
-                }
-                for (int i = 0; i < cosmeticStackHelper.getSlots(); i++) {
-                    ItemStack stack = cosmeticStackHelper.getStackInSlot(i);
-
-                    if (!stack.isEmpty() && filter.test(stack)) {
-                        return new ImmutableTriple<>(id, i, stack);
-                    }
-                }
-            }
-            return new ImmutableTriple<>("", 0, ItemStack.EMPTY);
-        }).orElse(new ImmutableTriple<>("", 0, ItemStack.EMPTY));
-
-        return result.getLeft().isEmpty() ? Optional.empty() : Optional.of(result);
+        Optional<ImmutableTriple<String, Integer, ItemStack>> cosmetic(Predicate<ItemStack> filter, LivingEntity entity);
     }
 }

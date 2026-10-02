@@ -6,7 +6,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 import java.util.List;
@@ -19,8 +18,8 @@ public abstract class LodestoneArmorItem extends ArmorItem {
     }
 
     @Override
-    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        ItemAttributeModifiers modifiers = super.getDefaultAttributeModifiers(stack);
+    public ItemAttributeModifiers getDefaultAttributeModifiers() {
+        ItemAttributeModifiers modifiers = super.getDefaultAttributeModifiers();
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
 
         List<ItemAttributeModifiers.Entry> entries = modifiers.modifiers();

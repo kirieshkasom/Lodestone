@@ -1,34 +1,33 @@
 package team.lodestar.lodestone.modules.toolkit.creative_tab;
 
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
-import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@SuppressWarnings("NullableProblems")
-public class CategorizedBuilder extends CreativeModeTab.Builder {
-
+public class CategorizedBuilder {
     public CreativeTabVisualInfo visualInfo;
 
-    public CategorizedBuilder(Function<CategorizedBuilder, CategorizedCreativeTab> tabFactory, CreativeModeTab.Row row, int column) {
-        super(row, column);
-        withTabFactory(b -> tabFactory.apply((CategorizedBuilder) b));
-    }
+    private final Function<CategorizedBuilder, CategorizedCreativeTab> tabFactory;
+    private final CreativeModeTab.Row row;
+    private final int column;
+    private Component title = Component.empty();
+    private Supplier<ItemStack> icon = () -> ItemStack.EMPTY;
+    private CreativeModeTab.DisplayItemsGenerator displayItems = (parameters, output) -> {
+    };
+    private boolean alignedRight;
+    private boolean showTitle = true;
+    private boolean canScroll = true;
+    private ResourceLocation backgroundTexture;
 
-    @SafeVarargs
-    public final CategorizedBuilder withTabsBefore(Holder<? extends CreativeModeTab>... tabs) {
-        for (Holder<? extends CreativeModeTab> tab : tabs) {
-            var key = tab.getKey();
-            assert key != null;
-            withTabsBefore(key.location());
-        }
-        return this;
+    public CategorizedBuilder(Function<CategorizedBuilder, CategorizedCreativeTab> tabFactory, CreativeModeTab.Row row, int column) {
+        this.tabFactory = Objects.requireNonNull(tabFactory);
+        this.row = row;
+        this.column = column;
     }
 
     public CategorizedBuilder withVisualInfo(CreativeTabVisualInfo visualInfo) {
@@ -36,93 +35,79 @@ public class CategorizedBuilder extends CreativeModeTab.Builder {
         return this;
     }
 
-    @Override
     public CategorizedBuilder title(Component title) {
-        return (CategorizedBuilder) super.title(title);
+        this.title = title;
+        return this;
     }
 
-    @Override
     public CategorizedBuilder icon(Supplier<ItemStack> icon) {
-        return (CategorizedBuilder) super.icon(icon);
+        this.icon = icon;
+        return this;
     }
 
-    @Override
     public CategorizedBuilder displayItems(CreativeModeTab.DisplayItemsGenerator displayItemsGenerator) {
-        return (CategorizedBuilder) super.displayItems(displayItemsGenerator);
+        this.displayItems = displayItemsGenerator;
+        return this;
     }
 
-    @Override
     public CategorizedBuilder alignedRight() {
-        return (CategorizedBuilder) super.alignedRight();
+        this.alignedRight = true;
+        return this;
     }
 
-    @Override
     public CategorizedBuilder hideTitle() {
-        return (CategorizedBuilder) super.hideTitle();
+        this.showTitle = false;
+        return this;
     }
 
-    @Override
     public CategorizedBuilder noScrollBar() {
-        return (CategorizedBuilder) super.noScrollBar();
+        this.canScroll = false;
+        return this;
     }
 
-    @Override
-    protected CategorizedBuilder type(CreativeModeTab.Type type) {
-        return (CategorizedBuilder) super.type(type);
-    }
-
-    @Override
     public CategorizedBuilder backgroundTexture(ResourceLocation backgroundTexture) {
-        return (CategorizedBuilder) super.backgroundTexture(backgroundTexture);
+        this.backgroundTexture = backgroundTexture;
+        return this;
     }
 
-    @Override
-    public CategorizedBuilder withSearchBar() {
-        return (CategorizedBuilder) super.withSearchBar();
+    public CreativeModeTab build() {
+        CategorizedCreativeTab tab = this.tabFactory.apply(this);
+        return CategorizedCreativeTabPlatform.create(this, tab);
     }
 
-    @Override
-    public CategorizedBuilder withSearchBar(int searchBarWidth) {
-        return (CategorizedBuilder) super.withSearchBar(searchBarWidth);
+    public CreativeModeTab.Row row() {
+        return this.row;
     }
 
-    @Override
-    public CategorizedBuilder withScrollBarSpriteLocation(ResourceLocation scrollBarSpriteLocation) {
-        return (CategorizedBuilder) super.withScrollBarSpriteLocation(scrollBarSpriteLocation);
+    public int column() {
+        return this.column;
     }
 
-    @Override
-    public CategorizedBuilder withTabsImage(ResourceLocation tabsImage) {
-        return (CategorizedBuilder) super.withTabsImage(tabsImage);
+    public Component titleValue() {
+        return this.title;
     }
 
-    @Override
-    public CategorizedBuilder withLabelColor(int labelColor) {
-        return (CategorizedBuilder) super.withLabelColor(labelColor);
+    public Supplier<ItemStack> iconValue() {
+        return this.icon;
     }
 
-    @Override
-    public CategorizedBuilder withSlotColor(int slotColor) {
-        return (CategorizedBuilder) super.withSlotColor(slotColor);
+    public CreativeModeTab.DisplayItemsGenerator displayItemsValue() {
+        return this.displayItems;
     }
 
-    @Override
-    public CategorizedBuilder withTabFactory(Function<CreativeModeTab.Builder, CreativeModeTab> tabFactory) {
-        return (CategorizedBuilder) super.withTabFactory(tabFactory);
+    public boolean isAlignedRight() {
+        return this.alignedRight;
     }
 
-    @Override
-    public CategorizedBuilder withTabsBefore(ResourceLocation... tabs) {
-        return (CategorizedBuilder) super.withTabsBefore(tabs);
+    public boolean showsTitle() {
+        return this.showTitle;
     }
 
-    @Override
-    public CategorizedBuilder withTabsAfter(ResourceLocation... tabs) {
-        return (CategorizedBuilder) super.withTabsAfter(tabs);
+    public boolean canScroll() {
+        return this.canScroll;
     }
 
-    @Override
-    public CategorizedBuilder displayItems(Collection<? extends Holder<? extends ItemLike>> collection) {
-        return (CategorizedBuilder) super.displayItems(collection);
+    public ResourceLocation backgroundTextureValue() {
+        return this.backgroundTexture;
     }
 }

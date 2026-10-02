@@ -5,12 +5,11 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.registries.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.*;
 
-public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(DeferredBlock<T> block, DeferredItem<K> item) implements Supplier<T>, ItemLike {
+public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Supplier<T> block, Supplier<K> item) implements Supplier<T>, ItemLike {
 
     @Override
     public T get() {
@@ -34,11 +33,11 @@ public record BlockBlockItemHolder<T extends Block, K extends BlockItem>(Deferre
         return item.get();
     }
 
-    public DeferredHolder<Block, T> getBlockHolder() {
+    public Supplier<T> getBlockHolder() {
         return block;
     }
 
-    public DeferredHolder<Item, K> getItemHolder() {
+    public Supplier<K> getItemHolder() {
         return item;
     }
 

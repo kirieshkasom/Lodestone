@@ -1,6 +1,5 @@
 package team.lodestar.lodestone.modules.toolkit.block;
 
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.*;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.data.loading.DatagenModLoader;
 import org.jetbrains.annotations.NotNull;
 import team.lodestar.lodestone.modules.core.datagen.DatagenOnly;
 import team.lodestar.lodestone.modules.core.datagen.LodestoneDatagenBlockData;
@@ -30,6 +28,17 @@ import java.util.function.*;
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class LodestoneBlockProperties extends BlockBehaviour.Properties {
+    private Supplier<? extends Block> lootSource;
+    private BlockRenderType renderType = BlockRenderType.SOLID;
+
+    public BlockRenderType getRenderType() {
+        return renderType;
+    }
+
+    public Supplier<? extends Block> getLootSource() {
+        return lootSource;
+    }
+
 
     public enum BlockRenderType {
         SOLID("solid"),
@@ -99,6 +108,8 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         copy.hasPostProcess = properties.hasPostProcess;
 
         if (properties instanceof LodestoneBlockProperties from) {
+            copy.renderType = from.renderType;
+            copy.lootSource = from.lootSource;
             from.copyDatagenDataTo(copy);
         }
 
@@ -119,7 +130,7 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
 
     @DatagenOnly
     public LodestoneBlockProperties addDatagenData(Consumer<LodestoneDatagenBlockData> function) {
-        if (DatagenModLoader.isRunningDataGen()) {
+        if (LodestoneDatagenBlockData.isDatagenRunning()) {
             function.accept(getDatagenData());
         }
         return this;
@@ -127,7 +138,7 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
 
     @DatagenOnly
     public LodestoneBlockProperties copyDatagenDataTo(LodestoneBlockProperties to) {
-        if (DatagenModLoader.isRunningDataGen()) {
+        if (LodestoneDatagenBlockData.isDatagenRunning()) {
             LodestoneDatagenBlockData.copyDatagenDataFrom(this, to);
         }
         return this;
@@ -220,6 +231,7 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
     }
 
     public LodestoneBlockProperties setRenderType(BlockRenderType renderType) {
+        this.renderType = renderType;
         addDatagenData(d -> d.setRenderType(renderType));
         return this;
     }
@@ -311,11 +323,11 @@ public class LodestoneBlockProperties extends BlockBehaviour.Properties {
         return (LodestoneBlockProperties) super.dropsLike(block);
     }
 
-    @Override
     @NotNull
     public LodestoneBlockProperties lootFrom(@NotNull Supplier<? extends Block> blockIn) {
         noLootDatagen();
-        return (LodestoneBlockProperties) super.lootFrom(blockIn);
+        this.lootSource = blockIn;
+        return this;
     }
 
     @Override

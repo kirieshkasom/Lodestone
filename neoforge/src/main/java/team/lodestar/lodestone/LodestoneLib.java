@@ -33,6 +33,9 @@ public class LodestoneLib {
     public static final RandomSource RANDOM = LodestoneCommon.RANDOM;
 
     public LodestoneLib(IEventBus modEventBus, ModContainer modContainer) {
+        team.lodestar.lodestone.neoforge.LodestoneNeoForgeEnchantmentIteration.install();
+        team.lodestar.lodestone.neoforge.NeoForgeCategorizedCreativeTabFactory.install();
+        team.lodestar.lodestone.neoforge.LodestoneNeoForgeItemComponents.register(modEventBus);
         WorldEventCommandContext.serverSupplier(ServerLifecycleHooks::getCurrentServer);
         WorldEventStorageAccess.install(new NeoForgeWorldEventStorage());
         WorldEventCallbackAccess.install(new NeoForgeWorldEventCallbacks());
@@ -49,7 +52,7 @@ public class LodestoneLib {
         LodestoneEnchantmentComponents.ENCHANTMENT_COMPONENTS.register(modEventBus);
         LodestoneCommandArgumentTypes.register(modEventBus);
         modEventBus.addListener(ModEvents::registerCommon);
-        CuriosCompat.init();
+        team.lodestar.lodestone.neoforge.compat.LodestoneNeoForgeCurios.install();
     }
 
     public static ResourceLocation lodestonePath(String path) {

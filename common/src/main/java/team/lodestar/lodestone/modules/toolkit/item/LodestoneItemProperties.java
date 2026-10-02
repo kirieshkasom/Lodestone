@@ -9,20 +9,18 @@ import net.minecraft.world.flag.*;
 import net.minecraft.world.food.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.*;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.registries.*;
 import team.lodestar.lodestone.modules.toolkit.creative_tab.CategorizedCreativeTab;
+import team.lodestar.lodestone.modules.toolkit.creative_tab.CategorizedTabAccess;
+import team.lodestar.lodestone.internal.registration.LodestoneItemComponents;
+import team.lodestar.lodestone.modules.toolkit.rarity.LodestoneRarity;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class LodestoneItemProperties extends Item.Properties {
     public static final Map<ResourceKey<CreativeModeTab>, List<ResourceLocation>> TAB_SORTING = new HashMap<>();
 
     public final ResourceKey<CreativeModeTab> tab;
-
-    public LodestoneItemProperties(DeferredHolder<CreativeModeTab, CreativeModeTab> tab) {
-        this(tab.getKey());
-    }
 
     public LodestoneItemProperties(ResourceKey<CreativeModeTab> tab) {
         this.tab = tab;
@@ -59,7 +57,7 @@ public class LodestoneItemProperties extends Item.Properties {
                 builder.add(entry.attribute(), entry.modifier(), entry.slot());
             }
             for (ItemAttributeModifiers.Entry entry : attributes.modifiers()) {
-                builder.add(entry.attribute().getDelegate(), entry.modifier(), entry.slot());
+                builder.add(entry.attribute(), entry.modifier(), entry.slot());
             }
             return attributes(builder.build());
         }
@@ -91,6 +89,10 @@ public class LodestoneItemProperties extends Item.Properties {
         return (LodestoneItemProperties)  super.rarity(rarity);
     }
 
+    public LodestoneItemProperties rarity(LodestoneRarity rarity) {
+        return component(LodestoneItemComponents.RARITY_STYLE.get(), rarity);
+    }
+
     @Override
     public LodestoneItemProperties fireResistant() {
         return (LodestoneItemProperties)  super.fireResistant();
@@ -99,11 +101,6 @@ public class LodestoneItemProperties extends Item.Properties {
     @Override
     public LodestoneItemProperties jukeboxPlayable(ResourceKey<JukeboxSong> song) {
         return (LodestoneItemProperties)  super.jukeboxPlayable(song);
-    }
-
-    @Override
-    public LodestoneItemProperties setNoRepair() {
-        return (LodestoneItemProperties)  super.setNoRepair();
     }
 
     @Override
@@ -130,15 +127,15 @@ public class LodestoneItemProperties extends Item.Properties {
         }
     }
 
-    public static void buildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTab() instanceof CategorizedCreativeTab) {
+    public static void buildCreativeTabs(CreativeModeTab tab, ResourceKey<CreativeModeTab> tabKey, Collection<ItemStack> parentEntries, Consumer<ItemStack> consumer) {
+        if (tab instanceof CategorizedTabAccess) {
             return;
         }
-        var tabKey = event.getTabKey();
         if (TAB_SORTING.containsKey(tabKey)) {
             TAB_SORTING.get(tabKey).stream().map(BuiltInRegistries.ITEM::get)
-                    .filter(s -> !event.getParentEntries().contains(s.getDefaultInstance()))
-                    .forEach(event::accept);
+                    .map(Item::getDefaultInstance)
+                    .filter(stack -> !parentEntries.contains(stack))
+                    .forEach(consumer);
         }
     }
 }

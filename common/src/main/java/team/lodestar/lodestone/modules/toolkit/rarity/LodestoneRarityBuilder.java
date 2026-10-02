@@ -1,56 +1,49 @@
 package team.lodestar.lodestone.modules.toolkit.rarity;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Rarity;
-import net.neoforged.fml.common.asm.enumextension.EnumProxy;
 
-import java.awt.*;
-import java.util.function.UnaryOperator;
+import java.awt.Color;
+import java.util.Optional;
 
-/**
- * This builder is used to define and format custom rarities.
- * It returns an EnumProxy which is required for adding a new Rarity entry to the enum through NeoForge's Extensible Enum System.
- */
 public class LodestoneRarityBuilder {
-    private int id = -1;
-    private TextColor color;
+    private int legacyId = -1;
+    private Optional<Integer> color = Optional.empty();
     private boolean italic;
     private boolean bold;
     private boolean obfuscated;
     private boolean underlined;
     private boolean strikethrough;
-    private final String name;
+    private final ResourceLocation id;
 
-    public LodestoneRarityBuilder(ResourceLocation name) {
-        this.name = name.toString();
+    public LodestoneRarityBuilder(ResourceLocation id) {
+        this.id = id;
     }
 
     public LodestoneRarityBuilder withId(int id) {
-        this.id = id;
+        this.legacyId = id;
         return this;
     }
 
     public LodestoneRarityBuilder withColor(TextColor color) {
-        this.color = color;
+        this.color = color == null ? Optional.empty() : Optional.of(color.getValue());
         return this;
     }
 
     public LodestoneRarityBuilder withColor(ChatFormatting color) {
-        this.color = TextColor.fromLegacyFormat(color);
+        Integer colorValue = color == null ? null : color.getColor();
+        this.color = colorValue == null ? Optional.empty() : Optional.of(colorValue);
         return this;
     }
 
     public LodestoneRarityBuilder withColor(int color) {
-        this.color = TextColor.fromRgb(color);
+        this.color = Optional.of(color & 0xFFFFFF);
         return this;
     }
 
     public LodestoneRarityBuilder withColor(Color color) {
-        this.color = TextColor.fromRgb(color.getRGB());
-        return this;
+        return withColor(color.getRGB());
     }
 
     public LodestoneRarityBuilder setItalic(boolean italic) {
@@ -78,11 +71,15 @@ public class LodestoneRarityBuilder {
         return this;
     }
 
-    public EnumProxy<Rarity> build() {
-        return new EnumProxy<>(Rarity.class, this.id, this.name, (UnaryOperator<Style>) s -> s
-                .withColor(this.color).withItalic(this.italic).withBold(this.bold)
-                .withObfuscated(this.obfuscated).withUnderlined(this.underlined)
-                .withStrikethrough(this.strikethrough)
-        );
+    public int getLegacyId() {
+        return this.legacyId;
+    }
+
+    public ResourceLocation getId() {
+        return this.id;
+    }
+
+    public LodestoneRarity build() {
+        return new LodestoneRarity(this.id, this.color, this.italic, this.bold, this.obfuscated, this.underlined, this.strikethrough);
     }
 }

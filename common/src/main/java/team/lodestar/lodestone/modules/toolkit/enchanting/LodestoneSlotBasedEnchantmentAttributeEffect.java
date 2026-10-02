@@ -14,9 +14,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.*;
 import net.minecraft.world.item.enchantment.effects.*;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.event.*;
-import team.lodestar.lodestone.registry.common.*;
 import team.lodestar.lodestone.registry.common.tag.*;
+
+import java.util.function.Consumer;
 
 /**
  * @author SammySemicolon
@@ -35,20 +35,15 @@ public record LodestoneSlotBasedEnchantmentAttributeEffect(ResourceLocation id, 
                     .apply(obj, LodestoneSlotBasedEnchantmentAttributeEffect::new)
     );
 
-    public static void modifyAttributes(ItemAttributeModifierEvent event) {
-        var stack = event.getItemStack();
+    public static void modifyAttributes(ItemStack stack, Consumer<AppliedModifier> consumer) {
         if (stack.is(LodestoneItemTags.ENCHANTMENT_HOLDER)) {
             return;
         }
-        EnchantmentHelper.runIterationOnItem(stack, (holder, level) -> {
+        LodestoneEnchantmentDataHelper.runIterationOnItem(stack, null, (holder, level) -> {
             var enchantment = holder.value();
             enchantment.getEffects(LodestoneEnchantmentEffects.SLOT_BOUND_ATTRIBUTES.get()).forEach((effect) -> {
-                EquipmentSlot equipmentSlot = stack.getEquipmentSlot();
-                if (equipmentSlot == null) {
-                    if (stack.getItem() instanceof ArmorItem armorItem) {
-                        equipmentSlot = armorItem.getEquipmentSlot();
-                    }
-                }
+                Equipable equipable = Equipable.get(stack);
+                EquipmentSlot equipmentSlot = equipable == null ? null : equipable.getEquipmentSlot();
                 EquipmentSlotGroup group = null;
                 if (equipmentSlot != null) {
                     EquipmentSlot finalEquipmentSlot = equipmentSlot;
@@ -60,9 +55,12 @@ public record LodestoneSlotBasedEnchantmentAttributeEffect(ResourceLocation id, 
                     group = EquipmentSlotGroup.ANY;
                 }
                 AttributeModifier modifier = effect.getModifier(level, group);
-                event.addModifier(effect.attribute(), modifier, group);
+                consumer.accept(new AppliedModifier(effect.attribute(), modifier, group));
             });
         });
+    }
+
+    public record AppliedModifier(Holder<Attribute> attribute, AttributeModifier modifier, EquipmentSlotGroup slot) {
     }
 
     private ResourceLocation idForSlot(StringRepresentable slot) {

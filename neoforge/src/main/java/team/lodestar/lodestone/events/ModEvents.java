@@ -18,7 +18,7 @@ public class ModEvents {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void buildCreativeTabs(BuildCreativeModeTabContentsEvent event) {
-        CategorizedCreativeTab.buildCreativeTabs(event);
-        LodestoneItemProperties.buildCreativeTabs(event);
+        CategorizedCreativeTab.buildCreativeTabs(event.getTab(), event::accept);
+        LodestoneItemProperties.buildCreativeTabs(event.getTab(), event.getTabKey(), event.getParentEntries(), event::accept);
     }
 }

@@ -18,8 +18,8 @@ public class CategorizedCreativeTabHandler {
     
     public static Optional<CategorizedCreativeTab> getOpenCategorizedTab() {
         var selectedTab = CreativeModeInventoryScreen.selectedTab;
-        if (selectedTab instanceof CategorizedCreativeTab categorizedTab) {
-            return Optional.of(categorizedTab);
+        if (selectedTab instanceof CategorizedTabAccess access) {
+            return Optional.of(access.categorizedTab());
         }
         return Optional.empty();
     }
@@ -46,7 +46,7 @@ public class CategorizedCreativeTabHandler {
             var item = slot.getItem();
             if (item.isEmpty()) {
                 var menu = screen.getMenu();
-                int row = menu.getRowIndexForScroll(screen.scrollOffs) + slot.getSlotIndex() / 9;
+                int row = menu.getRowIndexForScroll(screen.scrollOffs) + slot.getContainerSlot() / 9;
                 int column = slot.getContainerSlot() % 9;
                 int itemIndex = row * 9 + column;
                 var pose = guiGraphics.pose();

@@ -6,7 +6,7 @@ import net.minecraft.world.entity.ai.attributes.*;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.*;
 
-public class LodestoneAttribute extends Attribute {
+public class LodestoneAttribute extends Attribute implements LodestoneAttributeFormatting {
 
     private final ResourceLocation baseId;
 
@@ -21,18 +21,13 @@ public class LodestoneAttribute extends Attribute {
         this.forcePercentage = forcePercentage;
     }
 
-    @Override
     @Nullable
     public ResourceLocation getBaseId() {
         return baseId;
     }
 
-    @Override
     public @NotNull MutableComponent toValueComponent(@Nullable AttributeModifier.Operation op, double value, TooltipFlag flag) {
-        if (forcePercentage) {
-            return Component.translatable("neoforge.value.percent", FORMAT.format(value * 100));
-        }
-        return Component.translatable("neoforge.value.flat", FORMAT.format(value));
+        return AttributeValueFormatter.format(op, value, forcePercentage);
     }
 
 }

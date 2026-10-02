@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "team.lodestar.lodestone.fabric.mixin.gameplay",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "ItemResponseDamageMixin",
+    "ItemResponseAppliedDamageMixin",
+    "ItemResponseTooltipMixin",
+    "ItemStackEnchantmentAttributeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

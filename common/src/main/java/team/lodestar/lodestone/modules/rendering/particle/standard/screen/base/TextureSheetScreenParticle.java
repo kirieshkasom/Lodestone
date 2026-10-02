@@ -3,10 +3,7 @@ package team.lodestar.lodestone.modules.rendering.particle.standard.screen.base;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class TextureSheetScreenParticle extends QuadScreenParticle {
     protected TextureAtlasSprite sprite;
 
