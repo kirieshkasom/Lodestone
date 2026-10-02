@@ -57,7 +57,7 @@ tasks.processResources {
     }
 }
 tasks.named<Jar>("jar") {
-    from(project(":common").extensions.getByType<SourceSetContainer>()["main"].output)
+    from(project(":common").extensions.getByType<SourceSetContainer>()["main"].output.classesDirs)
 }
 tasks.named<Jar>("sourcesJar") {
     from(project(":common").extensions.getByType<SourceSetContainer>()["main"].allSource)

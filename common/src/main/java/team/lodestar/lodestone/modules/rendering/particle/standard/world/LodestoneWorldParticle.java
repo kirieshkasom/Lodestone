@@ -24,7 +24,7 @@ import java.util.function.*;
 public class LodestoneWorldParticle extends TextureSheetParticle {
 
     public final LodestoneParticleBehavior behavior;
-    public final ParticleEngine.MutableSpriteSet spriteSet;
+    public final LodestoneParticleSpriteSet spriteSet;
     public final SimpleParticleOptions.ParticleSpritePicker spritePicker;
 
     public final ParticleRenderType renderType;
@@ -53,10 +53,10 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
 
     float[] hsv1 = new float[3], hsv2 = new float[3];
 
-    public LodestoneWorldParticle(ClientLevel world, WorldParticleOptions options, ParticleEngine.MutableSpriteSet spriteSet, double x, double y, double z, double xd, double yd, double zd) {
+    public LodestoneWorldParticle(ClientLevel world, WorldParticleOptions options, SpriteSet spriteSet, double x, double y, double z, double xd, double yd, double zd) {
         super(world, x, y, z);
         this.behavior = options.behavior;
-        this.spriteSet = spriteSet;
+        this.spriteSet = spriteSet != null ? LodestoneParticleSpriteSet.wrap(spriteSet) : null;
         this.spritePicker = options.spritePicker;
         this.renderType = options.renderType;
         this.renderLayer = options.renderLayer;
@@ -83,8 +83,8 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
         if (spriteSet != null) {
             switch (spritePicker) {
                 case FIRST_INDEX, WITH_AGE -> pickSprite(0);
-                case LAST_INDEX, WITH_AGE_INVERSE -> pickSprite(spriteSet.sprites.size() - 1);
-                case RANDOM_SPRITE -> pickSprite(random.nextInt(spriteSet.sprites.size()));
+                case LAST_INDEX, WITH_AGE_INVERSE -> pickSprite(this.spriteSet.size() - 1);
+                case RANDOM_SPRITE -> pickSprite(random.nextInt(this.spriteSet.size()));
             }
         }
         if (lifeDelay == 0) {
@@ -106,7 +106,7 @@ public class LodestoneWorldParticle extends TextureSheetParticle {
     }
 
     public void pickSprite(int spriteIndex) {
-        setSprite(spriteSet.sprites.get(Mth.clamp(spriteIndex, 0, spriteSet.sprites.size() - 1)));
+        setSprite(spriteSet.get(spriteIndex));
     }
 
     public void pickColor(float colorCoeff) {

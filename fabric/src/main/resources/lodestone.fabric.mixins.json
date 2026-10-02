@@ -5,6 +5,7 @@
   "client": [
     "CameraScreenshakeMixin",
     "FabricFogCacheMixin",
+    "FabricParticleCommandSuggestionsMixin",
     "FabricRenderPhaseMixin",
     "ScreenParticleRenderTickMixin"
   ],

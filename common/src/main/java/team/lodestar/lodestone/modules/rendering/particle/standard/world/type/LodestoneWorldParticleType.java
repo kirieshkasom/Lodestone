@@ -23,7 +23,7 @@ public class LodestoneWorldParticleType extends AbstractLodestoneParticleType<Wo
         @Nullable
         @Override
         public Particle createParticle(WorldParticleOptions data, ClientLevel world, double x, double y, double z, double mx, double my, double mz) {
-            return new LodestoneWorldParticle(world, data, (ParticleEngine.MutableSpriteSet) sprite, x, y, z, mx, my, mz);
+            return new LodestoneWorldParticle(world, data, sprite, x, y, z, mx, my, mz);
         }
     }
 }
