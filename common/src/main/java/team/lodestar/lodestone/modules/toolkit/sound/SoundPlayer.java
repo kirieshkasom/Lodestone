@@ -6,7 +6,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.*;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.registries.*;
 import team.lodestar.lodestone.modules.core.easing.*;
 
 import java.util.function.*;
@@ -19,10 +18,6 @@ public class SoundPlayer {
     private double minPitch = 1, maxPitch = 1;
     private double minVolume = 1, maxVolume = 1;
     private final SoundEvent soundEvent;
-
-    public static SoundPlayer create(DeferredHolder<SoundEvent, SoundEvent> soundEvent) {
-        return create(soundEvent.value());
-    }
 
     public static SoundPlayer create(Holder<SoundEvent> soundEvent) {
         return create(soundEvent.value());

@@ -2,7 +2,6 @@ package team.lodestar.lodestone.modules.core.sound;
 
 import net.minecraft.resources.*;
 import net.minecraft.sounds.*;
-import net.neoforged.neoforge.registries.*;
 import org.jetbrains.annotations.*;
 
 import java.util.function.*;
@@ -10,17 +9,17 @@ import java.util.function.*;
 @SuppressWarnings("unused")
 public abstract class RegistryReadyBlockSoundType extends ExtendedSoundType {
 
-    protected final DeferredHolder<SoundEvent, SoundEvent> breakSound;
-    protected final DeferredHolder<SoundEvent, SoundEvent> stepSound;
-    protected final DeferredHolder<SoundEvent, SoundEvent> placeSound;
-    protected final DeferredHolder<SoundEvent, SoundEvent> hitSound;
-    protected final DeferredHolder<SoundEvent, SoundEvent> fallSound;
+    protected final Supplier<SoundEvent> breakSound;
+    protected final Supplier<SoundEvent> stepSound;
+    protected final Supplier<SoundEvent> placeSound;
+    protected final Supplier<SoundEvent> hitSound;
+    protected final Supplier<SoundEvent> fallSound;
 
-    public RegistryReadyBlockSoundType(Function<SoundEvent, DeferredHolder<SoundEvent, SoundEvent>> registry, Function<String, ResourceLocation> path, String name) {
+    public RegistryReadyBlockSoundType(Function<SoundEvent, ? extends Supplier<SoundEvent>> registry, Function<String, ResourceLocation> path, String name) {
         this(registry, path, name, 1f, 1f);
     }
 
-    public RegistryReadyBlockSoundType(Function<SoundEvent, DeferredHolder<SoundEvent, SoundEvent>> registry, Function<String, ResourceLocation> path, String name, float volume, float pitch) {
+    public RegistryReadyBlockSoundType(Function<SoundEvent, ? extends Supplier<SoundEvent>> registry, Function<String, ResourceLocation> path, String name, float volume, float pitch) {
         super(volume, pitch, null, null, null, null, null);
         breakSound = registry.apply(SoundEvent.createVariableRangeEvent(path.apply(name + "_break")));
         placeSound = registry.apply(SoundEvent.createVariableRangeEvent(path.apply(name + "_place")));
@@ -54,23 +53,23 @@ public abstract class RegistryReadyBlockSoundType extends ExtendedSoundType {
         return fallSound.get();
     }
 
-    public DeferredHolder<SoundEvent, SoundEvent> getBreakSoundHolder() {
+    public Supplier<SoundEvent> getBreakSoundHolder() {
         return breakSound;
     }
 
-    public DeferredHolder<SoundEvent, SoundEvent> getStepSoundHolder() {
+    public Supplier<SoundEvent> getStepSoundHolder() {
         return stepSound;
     }
 
-    public DeferredHolder<SoundEvent, SoundEvent> getPlaceSoundHolder() {
+    public Supplier<SoundEvent> getPlaceSoundHolder() {
         return placeSound;
     }
 
-    public DeferredHolder<SoundEvent, SoundEvent> getHitSoundHolder() {
+    public Supplier<SoundEvent> getHitSoundHolder() {
         return hitSound;
     }
 
-    public DeferredHolder<SoundEvent, SoundEvent> getFallSoundHolder() {
+    public Supplier<SoundEvent> getFallSoundHolder() {
         return fallSound;
     }
 }

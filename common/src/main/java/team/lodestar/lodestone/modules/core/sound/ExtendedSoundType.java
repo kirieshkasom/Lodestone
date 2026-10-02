@@ -9,18 +9,55 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.util.DeferredSoundType;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.sounds.SoundEvents;
 
 import java.util.function.Supplier;
 
 /**
- * An ExtendedSoundType is an extension of DeferredSoundType, that provides hooks for when each individual block sound is played.
+ * An ExtendedSoundType is an extension of SoundType, that provides hooks for when each individual block sound is played.
  */
 @SuppressWarnings("unused")
-public class ExtendedSoundType extends DeferredSoundType {
+public class ExtendedSoundType extends SoundType {
+
+    private final Supplier<SoundEvent> breakSoundSupplier;
+    private final Supplier<SoundEvent> stepSoundSupplier;
+    private final Supplier<SoundEvent> placeSoundSupplier;
+    private final Supplier<SoundEvent> hitSoundSupplier;
+    private final Supplier<SoundEvent> fallSoundSupplier;
 
     public ExtendedSoundType(float volumeIn, float pitchIn, Supplier<SoundEvent> breakSoundIn, Supplier<SoundEvent> stepSoundIn, Supplier<SoundEvent> placeSoundIn, Supplier<SoundEvent> hitSoundIn, Supplier<SoundEvent> fallSoundIn) {
-        super(volumeIn, pitchIn, breakSoundIn, stepSoundIn, placeSoundIn, hitSoundIn, fallSoundIn);
+        super(volumeIn, pitchIn, SoundEvents.STONE_BREAK, SoundEvents.STONE_STEP, SoundEvents.STONE_PLACE, SoundEvents.STONE_HIT, SoundEvents.STONE_FALL);
+        breakSoundSupplier = breakSoundIn;
+        stepSoundSupplier = stepSoundIn;
+        placeSoundSupplier = placeSoundIn;
+        hitSoundSupplier = hitSoundIn;
+        fallSoundSupplier = fallSoundIn;
+    }
+
+    @Override
+    public SoundEvent getBreakSound() {
+        return breakSoundSupplier.get();
+    }
+
+    @Override
+    public SoundEvent getStepSound() {
+        return stepSoundSupplier.get();
+    }
+
+    @Override
+    public SoundEvent getPlaceSound() {
+        return placeSoundSupplier.get();
+    }
+
+    @Override
+    public SoundEvent getHitSound() {
+        return hitSoundSupplier.get();
+    }
+
+    @Override
+    public SoundEvent getFallSound() {
+        return fallSoundSupplier.get();
     }
 
     /**
