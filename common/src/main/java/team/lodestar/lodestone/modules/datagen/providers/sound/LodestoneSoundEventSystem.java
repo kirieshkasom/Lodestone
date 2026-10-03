@@ -6,6 +6,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.registries.BuiltInRegistries;
 import team.lodestar.lodestone.modules.datagen.providers.ResourceFileHelper;
 import com.google.gson.JsonObject;
 import java.nio.file.Path;
@@ -52,7 +53,9 @@ public abstract class LodestoneSoundEventSystem implements DataProvider {
     }
 
     public void add(ResourceLocation event, SoundDefinition definition) {
-        definitions.put(event, definition);
+        if (definitions.putIfAbsent(event, definition) != null) {
+            throw new IllegalArgumentException("Duplicate sound event: " + event);
+        }
     }
 
     @SafeVarargs
@@ -148,8 +151,13 @@ public abstract class LodestoneSoundEventSystem implements DataProvider {
         return modId + ".subtitle." + id.getPath();
     }
 
+    protected abstract void registerSounds();
+
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
+        definitions.clear();
+        registerSounds();
+        definitions.forEach((id, definition) -> definition.validate(helper, target -> definitions.containsKey(target) || BuiltInRegistries.SOUND_EVENT.containsKey(target)));
         Map<String, JsonObject> byNamespace = new LinkedHashMap<>();
         definitions.forEach((id, definition) -> {
             JsonObject namespaceDefinitions = byNamespace.computeIfAbsent(id.getNamespace(), ignored -> new JsonObject());

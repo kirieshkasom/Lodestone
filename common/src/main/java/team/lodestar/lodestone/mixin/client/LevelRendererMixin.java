@@ -6,10 +6,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import team.lodestar.lodestone.modules.rendering.LodestoneRenderingSystem;
+import team.lodestar.lodestone.modules.rendering.handlers.ParticleHandler;
 import team.lodestar.lodestone.modules.rendering.postprocess.PostProcessHandler;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
+
+    @Inject(method = "renderLevel", at = @At("HEAD"))
+    private void lodestone$beginParticleFrame(CallbackInfo callback) {
+        ParticleHandler.beginFrame();
+    }
 
     @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "net.minecraft.client.renderer.PostChain.process(F)V", ordinal = 1))
     public void lodestone$injectionBeforeTransparencyChainProcess(CallbackInfo ci) {

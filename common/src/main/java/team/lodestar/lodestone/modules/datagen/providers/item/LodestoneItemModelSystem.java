@@ -8,6 +8,7 @@ import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.IDatagenPathfinder;
 import team.lodestar.lodestone.modules.datagen.model.ModelFile;
 import team.lodestar.lodestone.modules.datagen.providers.LodestoneJsonDataProvider;
+import team.lodestar.lodestone.modules.datagen.providers.ResourceFileHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +16,22 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class LodestoneItemModelSystem extends LodestoneJsonDataProvider implements IDatagenPathfinder {
     public final String modid;
+    private final ResourceFileHelper helper;
     private final Map<ResourceLocation, LodestoneItemModelBuilder> generatedModels = new HashMap<>();
     private String folder = "item";
 
     protected LodestoneItemModelSystem(PackOutput output, String modid) {
+        this(output, modid, ResourceFileHelper.empty());
+    }
+
+    protected LodestoneItemModelSystem(PackOutput output, String modid, ResourceFileHelper helper) {
         super(output, PackOutput.Target.RESOURCE_PACK, "models", modid + " Item Models");
         this.modid = modid;
+        this.helper = helper;
+    }
+
+    public ResourceFileHelper helper() {
+        return helper;
     }
 
     @Override
@@ -43,7 +54,7 @@ public abstract class LodestoneItemModelSystem extends LodestoneJsonDataProvider
 
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {
         ResourceLocation modified = DatagenSystemCommons.modifyModelParentPath(path);
-        return new ModelFile.ExistingModelFile(modified);
+        return new ModelFile.ExistingModelFile(modified, helper);
     }
 
     public LodestoneItemModelBuilder getBuilder(String path) {
@@ -52,6 +63,7 @@ public abstract class LodestoneItemModelSystem extends LodestoneJsonDataProvider
         }
         ResourceLocation modelPath = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         modelPath = DatagenSystemCommons.modifyModelPath(modelPath);
+        helper.trackGenerated(modelPath);
         ResourceLocation finalModelPath = modelPath;
         return generatedModels.computeIfAbsent(finalModelPath, location -> new LodestoneItemModelBuilder(this, location));
     }

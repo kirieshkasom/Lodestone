@@ -1,6 +1,7 @@
 package team.lodestar.lodestone.fabric;
 
 import net.fabricmc.api.ClientModInitializer;
+import team.lodestar.lodestone.fabric.rendering.FabricAdvancedModels;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import team.lodestar.lodestone.registry.client.LodestoneClientCommands;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -10,6 +11,7 @@ import team.lodestar.lodestone.internal.client.LodestoneClientReloads;
 public final class LodestoneFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        FabricAdvancedModels.install();
         LodestoneFabricRenderEvents.install();
         LodestoneFabricBlockRenderLayers.install();
         FabricParticleProviders.register();

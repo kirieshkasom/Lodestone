@@ -30,6 +30,18 @@ public final class NeoForgeCategorizedCreativeTab extends CreativeModeTab implem
         if (builder.backgroundTextureValue() != null) {
             tabBuilder.backgroundTexture(builder.backgroundTextureValue());
         }
+        if (builder.hasSearchBar()) {
+            tabBuilder.withSearchBar(builder.searchBarWidth());
+        }
+        if (builder.scrollerSprite() != null) {
+            tabBuilder.withScrollBarSpriteLocation(builder.scrollerSprite());
+        }
+        if (builder.tabsImage() != null) {
+            tabBuilder.withTabsImage(builder.tabsImage());
+        }
+        tabBuilder.withLabelColor(builder.labelColor()).withSlotColor(builder.slotColor());
+        tabBuilder.withTabsBefore(builder.tabsBefore().toArray(net.minecraft.resources.ResourceLocation[]::new));
+        tabBuilder.withTabsAfter(builder.tabsAfter().toArray(net.minecraft.resources.ResourceLocation[]::new));
         return tabBuilder;
     }
 

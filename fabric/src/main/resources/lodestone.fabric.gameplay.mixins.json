@@ -6,7 +6,10 @@
     "ItemResponseDamageMixin",
     "ItemResponseAppliedDamageMixin",
     "ItemResponseTooltipMixin",
-    "ItemStackEnchantmentAttributeMixin"
+    "ItemStackEnchantmentAttributeMixin",
+    "CreativeTabPositionMixin",
+    "CreativeTabOrderingMixin",
+    "ReloadRegistryLookupMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -21,6 +21,7 @@ import net.minecraft.server.MinecraftServer;
 import team.lodestar.lodestone.registry.common.LodestoneNetworkPayloads;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
 import net.minecraft.core.registries.BuiltInRegistries;
+import team.lodestar.lodestone.modules.toolkit.reload_listener.ReloadRegistryLookup;
 import team.lodestar.lodestone.internal.registration.LodestoneBlockEntityTypes;
 import team.lodestar.lodestone.internal.registration.LodestoneEnchantmentEffects;
 import team.lodestar.lodestone.internal.registration.LodestonePlacements;
@@ -39,6 +40,7 @@ public final class LodestoneFabric implements ModInitializer {
         FabricCreativeTabEvents.register();
         FabricCategorizedCreativeTabFactory.install();
         team.lodestar.lodestone.internal.registration.LodestoneItemComponents.register(new FabricRegistryRegistrar<>(BuiltInRegistries.DATA_COMPONENT_TYPE));
+        ReloadRegistryLookup.install(FabricReloadRegistryLookup::lookup);
         WorldEventCommandContext.serverSupplier(() -> server);
         WorldEventStorageAccess.install(WORLD_EVENT_STORAGE);
         WorldEventCallbackAccess.install(new FabricWorldEventCallbacks());

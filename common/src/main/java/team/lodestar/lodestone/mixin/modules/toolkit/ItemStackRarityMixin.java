@@ -2,6 +2,7 @@ package team.lodestar.lodestone.mixin.modules.toolkit;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
@@ -17,6 +18,24 @@ import java.util.List;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackRarityMixin {
+    @Inject(method = "getRarity", at = @At("RETURN"), cancellable = true)
+    private void lodestone$vanillaRarityTier(CallbackInfoReturnable<Rarity> callback) {
+        ItemStack stack = (ItemStack) (Object) this;
+        LodestoneRarity rarity = stack.get(LodestoneItemComponents.RARITY_STYLE.get());
+        if (rarity == null) {
+            return;
+        }
+        Rarity tier = rarity.vanillaRarity();
+        if (stack.isEnchanted()) {
+            tier = switch (tier) {
+                case COMMON, UNCOMMON -> Rarity.RARE;
+                case RARE -> Rarity.EPIC;
+                default -> tier;
+            };
+        }
+        callback.setReturnValue(tier);
+    }
+
     @Inject(method = "getHoverName", at = @At("RETURN"), cancellable = true)
     private void applyLodestoneRarityStyle(CallbackInfoReturnable<Component> callback) {
         ItemStack stack = (ItemStack) (Object) this;

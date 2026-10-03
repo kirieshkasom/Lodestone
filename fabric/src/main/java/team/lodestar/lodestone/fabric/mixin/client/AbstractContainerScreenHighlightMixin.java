@@ -6,6 +6,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
+import net.fabricmc.fabric.api.client.itemgroup.v1.FabricCreativeInventoryScreen;
+import team.lodestar.lodestone.fabric.FabricCategorizedCreativeTab;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import team.lodestar.lodestone.modules.toolkit.creative_tab.CategorizedCreativeTabHandler;
@@ -15,6 +17,9 @@ public abstract class AbstractContainerScreenHighlightMixin {
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderSlotHighlight(Lnet/minecraft/client/gui/GuiGraphics;III)V"))
     private void lodestone$disableSlotHighlight(GuiGraphics guiGraphics, int x, int y, int color, Operation<Void> original, @Local(ordinal = 0) Slot slot) {
         if (!CategorizedCreativeTabHandler.disableSlotHighlight(slot)) {
+            if ((Object) this instanceof FabricCreativeInventoryScreen screen && screen.getSelectedItemGroup() instanceof FabricCategorizedCreativeTab categorized) {
+                color = categorized.settings().slotColor();
+            }
             original.call(guiGraphics, x, y, color);
         }
     }

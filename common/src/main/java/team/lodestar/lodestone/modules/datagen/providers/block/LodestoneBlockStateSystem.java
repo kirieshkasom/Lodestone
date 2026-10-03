@@ -39,7 +39,7 @@ public abstract class LodestoneBlockStateSystem extends LodestoneJsonDataProvide
         super(output, PackOutput.Target.RESOURCE_PACK, "blockstates", modId + " Block States");
         this.modId = modId;
         this.itemModelProvider = itemModelProvider;
-        this.blockModels = new LodestoneBlockModelProvider(output, modId);
+        this.blockModels = new LodestoneBlockModelProvider(output, modId, itemModelProvider.helper());
     }
 
     @Override

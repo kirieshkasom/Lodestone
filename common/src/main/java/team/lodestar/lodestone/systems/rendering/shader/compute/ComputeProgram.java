@@ -54,7 +54,8 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
             this.attachShader(this.shader);
             this.link();
         } catch (Exception e) {
-            LodestoneCommon.LOGGER.error("Failed to load compute shader: " + this.shaderLocation, e);
+            this.destroy();
+            throw new IllegalStateException("Failed to load compute shader: " + this.shaderLocation, e);
         }
     }
 
@@ -91,8 +92,14 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
 
     private void link() {
         glLinkProgram(this.programId);
+        if (glGetProgrami(this.programId, GL_LINK_STATUS) == GL_FALSE) {
+            throw new IllegalStateException("Failed to link compute shader: " + glGetProgramInfoLog(this.programId));
+        }
     }
     public void bind() {
+        if (this.programId == 0) {
+            throw new IllegalStateException("Compute shader is not loaded: " + this.shaderLocation);
+        }
         ProgramManager.glUseProgram(this.programId);
     }
 
@@ -152,8 +159,7 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
             try (InputStream stream = provider.getResourceOrThrow(shaderLocation).open()) {
                 this.source = IOUtils.toString(stream, StandardCharsets.UTF_8);
             } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Failed to open resource: " + shaderLocation);
+                throw new IllegalStateException("Failed to open resource: " + shaderLocation, e);
             }
         }
 
@@ -170,7 +176,9 @@ public class ComputeProgram implements IBufferObject, LodestoneShader {
             glShaderSource(this.shaderId, this.source);
             glCompileShader(this.shaderId);
             if (glGetShaderi(this.shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
-                throw new RuntimeException("Failed to compile shader: " + glGetShaderInfoLog(this.shaderId, 1024));
+                String log = glGetShaderInfoLog(this.shaderId);
+                this.destroy();
+                throw new IllegalStateException("Failed to compile shader: " + log);
             }
         }
 

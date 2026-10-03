@@ -86,10 +86,12 @@ public class LodestoneItemProperties extends Item.Properties {
 
     @Override
     public LodestoneItemProperties rarity(Rarity rarity) {
+        components.set(LodestoneItemComponents.RARITY_STYLE.get(), null);
         return (LodestoneItemProperties)  super.rarity(rarity);
     }
 
     public LodestoneItemProperties rarity(LodestoneRarity rarity) {
+        super.rarity(rarity.vanillaRarity());
         return component(LodestoneItemComponents.RARITY_STYLE.get(), rarity);
     }
 

@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import team.lodestar.lodestone.internal.LodestoneCommon;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.function.Predicate;
 public final class LodestoneConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final ConcurrentMap<Path, Object> FILE_LOCKS = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Path, FileState> FILE_STATES = new ConcurrentHashMap<>();
     private static final int MAX_STRING_LENGTH = 32767;
     private static final int MAX_LIST_SIZE = 4096;
 
@@ -37,10 +40,61 @@ public final class LodestoneConfig {
                 bindings.add(prepareDefinition(file, root, definition));
             }
             write(file, root);
+            FileState state = FILE_STATES.computeIfAbsent(file, ignored -> new FileState());
+            state.values.clear();
             for (PendingBinding<?> binding : bindings) {
                 binding.bind();
+                state.values.add((StoredValue<?>) binding.value());
+            }
+            state.modified = modified(file);
+        }
+    }
+
+    public static void reloadChangedConfigs() {
+        FILE_STATES.keySet().forEach(file -> reloadIfChanged(file, true));
+    }
+
+    private static FileTime modified(Path file) {
+        try {
+            return Files.getLastModifiedTime(file);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Unable to inspect Lodestone config at " + file, exception);
+        }
+    }
+
+    private static void reloadIfChanged(Path file, boolean immediate) {
+        synchronized (fileLock(file)) {
+            FileState state = FILE_STATES.get(file);
+            if (state == null) {
+                return;
+            }
+            long now = System.nanoTime();
+            if (!immediate && now - state.lastCheck < 1_000_000_000L) {
+                return;
+            }
+            state.lastCheck = now;
+            try {
+                FileTime timestamp = modified(file);
+                if (!immediate && timestamp.equals(state.modified)) {
+                    return;
+                }
+                JsonObject root = read(file);
+                List<Runnable> updates = new ArrayList<>();
+                for (StoredValue<?> value : state.values) {
+                    updates.add(value.prepareReload(root));
+                }
+                updates.forEach(Runnable::run);
+                state.modified = timestamp;
+            } catch (RuntimeException exception) {
+                LodestoneCommon.LOGGER.error("Unable to reload Lodestone config at " + file, exception);
             }
         }
+    }
+
+    private static final class FileState {
+        private final List<StoredValue<?>> values = new ArrayList<>();
+        private FileTime modified;
+        private long lastCheck;
     }
 
     private static Object fileLock(Path file) {
@@ -158,7 +212,7 @@ public final class LodestoneConfig {
     private static final class StoredValue<T> implements ConfigValue<T> {
         private final Path file;
         private final ConfigDefinition<T> definition;
-        private T value;
+        private volatile T value;
 
         private StoredValue(Path file, ConfigDefinition<T> definition, T value) {
             this.file = file;
@@ -167,7 +221,8 @@ public final class LodestoneConfig {
         }
 
         @Override
-        public synchronized T get() {
+        public T get() {
+            reloadIfChanged(file, false);
             return copyValue(value);
         }
 
@@ -178,8 +233,30 @@ public final class LodestoneConfig {
                 JsonObject root = read(file);
                 save(root, definition.getPath(), checkedValue);
                 write(file, root);
-                this.value = checkedValue;
+                FileState state = FILE_STATES.get(file);
+                for (StoredValue<?> stored : state.values) {
+                    stored.prepareReload(root).run();
+                }
+                state.modified = modified(file);
             }
+        }
+
+        private Runnable prepareReload(JsonObject root) {
+            String[] path = definition.getPath();
+            JsonElement element = root;
+            for (String segment : path) {
+                element = element != null && element.isJsonObject() ? element.getAsJsonObject().get(segment) : null;
+            }
+            T loadedValue = definition.getDefaultValue();
+            if (element != null) {
+                try {
+                    loadedValue = validateSupported(definition.validate(decode(element, loadedValue)));
+                } catch (IllegalArgumentException exception) {
+                    loadedValue = definition.getDefaultValue();
+                }
+            }
+            T updatedValue = loadedValue;
+            return () -> this.value = updatedValue;
         }
 
         private static void save(JsonObject root, String[] path, Object value) {

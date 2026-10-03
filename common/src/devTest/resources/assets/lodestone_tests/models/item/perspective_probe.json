@@ -1,0 +1,5 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "base": {"parent": "minecraft:block/stone"},
+  "perspectives": {"gui": {"parent": "minecraft:item/diamond"}}
+}

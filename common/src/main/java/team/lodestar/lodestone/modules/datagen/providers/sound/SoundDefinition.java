@@ -3,6 +3,9 @@ package team.lodestar.lodestone.modules.datagen.providers.sound;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import team.lodestar.lodestone.modules.datagen.providers.ResourceFileHelper;
+import java.util.function.Predicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,16 @@ public final class SoundDefinition {
     public SoundDefinition with(Sound... sounds) {
         this.sounds.addAll(List.of(sounds));
         return this;
+    }
+
+    public void validate(ResourceFileHelper helper, Predicate<ResourceLocation> eventExists) {
+        for (Sound sound : sounds) {
+            ResourceLocation id = ResourceLocation.parse(sound.name);
+            boolean exists = "event".equals(sound.type) ? eventExists.test(id) : helper.exists(id, PackType.CLIENT_RESOURCES, ".ogg", "sounds");
+            if (!exists) {
+                throw new IllegalStateException("Missing sound " + ("event".equals(sound.type) ? "event: " : "file: ") + id);
+            }
+        }
     }
 
     public JsonObject toJson() {
@@ -56,6 +69,9 @@ public final class SoundDefinition {
         }
 
         public Sound type(String type) {
+            if (!type.equals("event") && !type.equals("sound")) {
+                throw new IllegalArgumentException("Sound type must be sound or event");
+            }
             this.type = type;
             return this;
         }

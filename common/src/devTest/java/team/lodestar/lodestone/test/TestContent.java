@@ -14,6 +14,8 @@ public final class TestContent {
     public static final String MOD_ID = "lodestone_tests";
     public static Supplier<WorldEventType> EVENT;
     public static Supplier<Item> HELMET;
+    public static Supplier<Item> PERSPECTIVE_PROBE;
+    public static Supplier<Item> LAYER_PROBE;
     public static Holder<ArmorMaterial> ARMOR_MATERIAL;
 
     private TestContent() {

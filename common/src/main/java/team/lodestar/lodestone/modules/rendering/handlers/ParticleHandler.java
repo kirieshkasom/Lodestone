@@ -16,6 +16,7 @@ public class ParticleHandler {
     private static final int DEFAULT_POOL_CAPACITY = 1000;
     private static final Map<ParticlePoolKey, ParticlePoolGroup> poolGroups = new ConcurrentHashMap<>();
     private static final Map<Integer, CompiledParticleVisualSet> compiledVisuals = new ConcurrentHashMap<>();
+    private static final Set<ParticlePool> preparedPools = Collections.newSetFromMap(new IdentityHashMap<>());
     private static final ParticleVisualCollector collector = new ParticleVisualCollector();
 
     public static void spawn(ParticleSpec spec, ParticleSpawnContext ctx) {
@@ -48,6 +49,10 @@ public class ParticleHandler {
         }
     }
 
+    public static void beginFrame() {
+        preparedPools.clear();
+    }
+
     public static void render(RenderPhase phase, float partialTicks, Matrix4f modelViewMatrix, Matrix4f projectionMatrix) {
         collector.clear();
 
@@ -55,10 +60,12 @@ public class ParticleHandler {
             for (ParticlePool pool : group.pools()) {
                 if (pool.count() <= 0) continue;
 
-                pool.preRender(partialTicks);
                 for (int visualId : pool.getActiveVisualIds()) {
                     CompiledParticleVisualSet visuals = compiledVisuals.get(visualId);
-                    if (visuals == null || visuals.isEmpty()) continue;
+                    if (visuals == null || !visuals.hasPhase(phase)) continue;
+                    if (preparedPools.add(pool)) {
+                        pool.preRender(partialTicks);
+                    }
 
                     ParticleVisualCollectContext ctx = new ParticleVisualCollectContext(collector, pool, visualId);
                     visuals.collect(pool, ctx, phase);
@@ -86,6 +93,7 @@ public class ParticleHandler {
     }
 
     public static void clearClientParticles() {
+        preparedPools.clear();
         for (ParticlePoolGroup group : poolGroups.values()) {
             for (ParticlePool pool : group.pools()) {
                 pool.clear();

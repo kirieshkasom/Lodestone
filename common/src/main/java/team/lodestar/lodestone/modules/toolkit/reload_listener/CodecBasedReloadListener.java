@@ -5,10 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.function.Supplier;
-import java.util.Objects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -32,12 +29,12 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
     protected final Codec<Optional<T>> lookupOptionalCodec;
 
     public CodecBasedReloadListener(String directory) {
-        this(directory, () -> RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY));
+        this(directory, null);
     }
 
     public CodecBasedReloadListener(String directory, Supplier<HolderLookup.Provider> registryLookup) {
         super(GSON, directory);
-        this.registryLookup = Objects.requireNonNull(registryLookup);
+        this.registryLookup = registryLookup;
         lookupCodec = getKeyCodec().xmap(this::get, this::getID);
 
         lookupOptionalCodec = LodestoneCodecs.optionalCodec(getKeyCodec()).xmap(
@@ -69,7 +66,7 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
         }
         var object = element.getAsJsonObject();
         try {
-            var result = getCodec().parse(RegistryOps.create(JsonOps.INSTANCE, getRegistryLookup()), object).result();
+            var result = getCodec().parse(RegistryOps.create(JsonOps.INSTANCE, resolveRegistryLookup()), object).result();
             result.ifPresent(b -> data.put(getID(b), b));
         } catch (JsonParseException exception) {
             LodestoneCommon.LOGGER.info("Something ominous has occurred... {}, {}", location, exception);
@@ -77,8 +74,8 @@ public abstract class CodecBasedReloadListener<K, T> extends SimpleJsonResourceR
 
     }
 
-    protected HolderLookup.Provider getRegistryLookup() {
-        return registryLookup.get();
+    protected HolderLookup.Provider resolveRegistryLookup() {
+        return registryLookup == null ? ReloadRegistryLookup.lookup(this) : registryLookup.get();
     }
 
     public abstract Codec<K> getKeyCodec();

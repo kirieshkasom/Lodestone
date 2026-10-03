@@ -1,0 +1,7 @@
+{
+  "loader": "neoforge:item_layers",
+  "parent": "minecraft:item/generated",
+  "textures": {"layer0": "minecraft:block/white_concrete", "layer1": "minecraft:item/diamond"},
+  "neoforge_data": {"layers": {"0": {"color": -65536, "block_light": 15, "sky_light": 15}}},
+  "render_types": {"minecraft:translucent": [0, 1]}
+}

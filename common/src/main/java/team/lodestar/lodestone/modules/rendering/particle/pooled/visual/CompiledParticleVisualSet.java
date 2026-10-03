@@ -33,6 +33,15 @@ public class CompiledParticleVisualSet {
         return runtimes.isEmpty();
     }
 
+    public boolean hasPhase(RenderPhase phase) {
+        for (RuntimeEntry entry : runtimes) {
+            if (entry.type.renderPhase() == phase) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void collect(ParticlePool pool, ParticleVisualCollectContext context, RenderPhase phase) {
         int liveCount = pool.count();
         if (liveCount <= 0 || runtimes.isEmpty()) {

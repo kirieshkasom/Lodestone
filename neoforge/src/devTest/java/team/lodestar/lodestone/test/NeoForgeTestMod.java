@@ -20,6 +20,8 @@ public final class NeoForgeTestMod {
         TestContent.ARMOR_MATERIAL = materials.register("crown", TestContent::createArmorMaterial);
         TestContent.EVENT = events.register("beacon", TestContent::createEventType);
         TestContent.HELMET = items.register("crown", NeoForgeTestArmorItem::new);
+        TestContent.PERSPECTIVE_PROBE = items.register("perspective_probe", () -> new Item(new Item.Properties()));
+        TestContent.LAYER_PROBE = items.register("layer_probe", () -> new Item(new Item.Properties()));
         events.register(modBus);
         materials.register(modBus);
         items.register(modBus);

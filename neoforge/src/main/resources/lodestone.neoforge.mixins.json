@@ -3,6 +3,7 @@
   "package": "team.lodestar.lodestone.neoforge.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ReloadRegistryLookupMixin",
     "LodestoneToolAbilityMixin",
     "LodestoneLogAbilityMixin"
   ],

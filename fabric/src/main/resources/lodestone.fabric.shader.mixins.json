@@ -4,7 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "client.GameRendererShaderReloadMixin",
-    "client.AbstractContainerScreenHighlightMixin"
+    "client.AbstractContainerScreenHighlightMixin",
+    "client.BlockModelDataMixin",
+    "client.BlockModelDeserializerMixin",
+    "client.ItemModelPerspectiveMixin",
+    "client.CategorizedCreativeScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

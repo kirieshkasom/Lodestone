@@ -4,9 +4,11 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.model.ModelFile;
+import java.util.function.UnaryOperator;
 
 public final class LodestoneItemModelBuilder extends ModelFile {
     public final LodestoneItemModelSystem provider;
+    private UnaryOperator<JsonObject> loaderData = UnaryOperator.identity();
 
     public LodestoneItemModelBuilder(LodestoneItemModelSystem provider, ResourceLocation outputLocation) {
         super(outputLocation, new JsonObject());
@@ -15,6 +17,7 @@ public final class LodestoneItemModelBuilder extends ModelFile {
 
     public LodestoneItemModelBuilder texture(String key, ResourceLocation path) {
         ResourceLocation modified = DatagenSystemCommons.modifyTexturePath(path);
+        provider.helper().requireTexture(modified);
         JsonObject textures = json.has("textures") ? json.getAsJsonObject("textures") : new JsonObject();
         textures.addProperty(key, modified.toString());
         json.add("textures", textures);
@@ -25,6 +28,16 @@ public final class LodestoneItemModelBuilder extends ModelFile {
         ResourceLocation modified = DatagenSystemCommons.modifyModelParentPath(parent.getLocation());
         json.addProperty("parent", modified.toString());
         return this;
+    }
+
+    public void customLoader(ResourceLocation loader, UnaryOperator<JsonObject> data) {
+        json.addProperty("loader", loader.toString());
+        loaderData = data;
+    }
+
+    @Override
+    public JsonObject toJson() {
+        return loaderData.apply(super.toJson());
     }
 
     public LodestoneItemModelBuilder display(String transform, JsonObject value) {

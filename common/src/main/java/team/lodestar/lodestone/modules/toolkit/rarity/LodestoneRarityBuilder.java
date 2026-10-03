@@ -3,11 +3,14 @@ package team.lodestar.lodestone.modules.toolkit.rarity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Rarity;
+import java.util.Objects;
 
 import java.awt.Color;
 import java.util.Optional;
 
 public class LodestoneRarityBuilder {
+    private Rarity vanillaRarity = Rarity.COMMON;
     private int legacyId = -1;
     private Optional<Integer> color = Optional.empty();
     private boolean italic;
@@ -19,6 +22,11 @@ public class LodestoneRarityBuilder {
 
     public LodestoneRarityBuilder(ResourceLocation id) {
         this.id = id;
+    }
+
+    public LodestoneRarityBuilder withVanillaRarity(Rarity rarity) {
+        this.vanillaRarity = Objects.requireNonNull(rarity);
+        return this;
     }
 
     public LodestoneRarityBuilder withId(int id) {
@@ -80,6 +88,6 @@ public class LodestoneRarityBuilder {
     }
 
     public LodestoneRarity build() {
-        return new LodestoneRarity(this.id, this.color, this.italic, this.bold, this.obfuscated, this.underlined, this.strikethrough);
+        return new LodestoneRarity(this.id, this.vanillaRarity, this.color, this.italic, this.bold, this.obfuscated, this.underlined, this.strikethrough);
     }
 }

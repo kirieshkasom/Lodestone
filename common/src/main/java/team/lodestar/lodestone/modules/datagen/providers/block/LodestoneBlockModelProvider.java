@@ -9,6 +9,7 @@ import team.lodestar.lodestone.modules.datagen.DatagenSystemCommons;
 import team.lodestar.lodestone.modules.datagen.IDatagenPathfinder;
 import team.lodestar.lodestone.modules.datagen.model.ModelFile;
 import team.lodestar.lodestone.modules.datagen.providers.LodestoneJsonDataProvider;
+import team.lodestar.lodestone.modules.datagen.providers.ResourceFileHelper;
 import team.lodestar.lodestone.modules.toolkit.block.LodestoneBlockProperties;
 
 import java.util.HashMap;
@@ -17,12 +18,18 @@ import java.util.function.Consumer;
 
 public final class LodestoneBlockModelProvider extends LodestoneJsonDataProvider implements IDatagenPathfinder {
     private final String modid;
+    private final ResourceFileHelper helper;
     private final Map<ResourceLocation, LodestoneBlockModelBuilder> generatedModels = new HashMap<>();
     private final String folder = "block";
 
     public LodestoneBlockModelProvider(PackOutput output, String modid) {
+        this(output, modid, ResourceFileHelper.empty());
+    }
+
+    public LodestoneBlockModelProvider(PackOutput output, String modid, ResourceFileHelper helper) {
         super(output, PackOutput.Target.RESOURCE_PACK, "models", modid + " Block Models");
         this.modid = modid;
+        this.helper = helper;
     }
 
     public LodestoneBlockModelBuilder getBuilder(String path) {
@@ -31,7 +38,8 @@ public final class LodestoneBlockModelProvider extends LodestoneJsonDataProvider
         }
         ResourceLocation modelPath = appendFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         modelPath = DatagenSystemCommons.modifyModelPath(modelPath);
-        LodestoneBlockModelBuilder builder = generatedModels.computeIfAbsent(modelPath, LodestoneBlockModelBuilder::new);
+        helper.trackGenerated(modelPath);
+        LodestoneBlockModelBuilder builder = generatedModels.computeIfAbsent(modelPath, location -> new LodestoneBlockModelBuilder(location, helper));
         setRenderType(builder);
         return builder;
     }
@@ -51,6 +59,10 @@ public final class LodestoneBlockModelProvider extends LodestoneJsonDataProvider
         }
     }
 
+    public ResourceFileHelper helper() {
+        return helper;
+    }
+
     @Override
     public String getModId() {
         return modid;
@@ -62,7 +74,7 @@ public final class LodestoneBlockModelProvider extends LodestoneJsonDataProvider
     }
 
     public ModelFile getExistingFile(ResourceLocation path) {
-        return new ModelFile.ExistingModelFile(DatagenSystemCommons.modifyModelParentPath(path));
+        return new ModelFile.ExistingModelFile(DatagenSystemCommons.modifyModelParentPath(path), helper);
     }
 
     public LodestoneBlockModelBuilder withExistingParent(Block block, ResourceLocation parent, String textureName) {
@@ -86,7 +98,7 @@ public final class LodestoneBlockModelProvider extends LodestoneJsonDataProvider
     }
 
     public LodestoneBlockModelBuilder withExistingParent(String name, ResourceLocation parent) {
-        return getBuilder(name).parent(new ModelFile.UncheckedModelFile(parent));
+        return getBuilder(name).parent(new ModelFile.ExistingModelFile(parent, helper));
     }
 
     public LodestoneBlockModelBuilder withExistingParent(String name, ResourceLocation parent, String textureKey, ResourceLocation texture) {

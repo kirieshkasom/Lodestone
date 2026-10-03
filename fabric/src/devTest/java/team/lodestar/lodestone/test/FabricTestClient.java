@@ -15,11 +15,21 @@ import team.lodestar.lodestone.registry.client.LodestoneWorldEventRenderers;
 import team.lodestar.lodestone.systems.rendering.shader.ExtendedShaderInstance;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import net.minecraft.client.resources.model.BakedModel;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemDisplayContext;
+import team.lodestar.lodestone.fabric.rendering.FabricPerspectiveModel;
+import team.lodestar.lodestone.internal.config.ConfigDefinition;
+import team.lodestar.lodestone.modules.core.config.LodestoneConfig;
 
 public final class FabricTestClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         TestClient.install();
+        TestGpuSmoke.loaderChecks = FabricTestClient::reviewRegressionChecks;
         ClientTickEvents.END_CLIENT_TICK.register(TestGpuSmoke::tick);
         TestClient.ARMOR.register((layer, definition) -> EntityModelLayerRegistry.registerModelLayer(layer, definition::get));
         FabricLodestoneArmorRenderer.register(new LodestoneArmorClientItemExtensions(TestClient.ARMOR), TestContent.HELMET.get());
@@ -45,4 +55,30 @@ public final class FabricTestClient implements ClientModInitializer {
             }
         });
     }
+
+    private static void reviewRegressionChecks() {
+        BakedModel model = Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(TestContent.PERSPECTIVE_PROBE.get());
+        if (!(model instanceof FabricPerspectiveModel perspectives)
+                || perspectives.lodestone$perspective(ItemDisplayContext.GUI) == perspectives.lodestone$perspective(ItemDisplayContext.GROUND)) {
+            throw new AssertionError("Fabric model contexts did not select separate geometry");
+        }
+        ConfigDefinition<Integer> value = new ConfigDefinition<>(TestContent.MOD_ID, "smoke/value", 1, number -> number > 0);
+        new LodestoneConfig(TestContent.MOD_ID, "smoke");
+        Path file = FabricLoader.getInstance().getConfigDir().resolve("lodestone").resolve(TestContent.MOD_ID).resolve("smoke.json");
+        try {
+            Files.writeString(file, "{\"value\": 7}");
+            LodestoneConfig.reloadChangedConfigs();
+            if (value.get() != 7) {
+                throw new AssertionError("Fabric did not reload an externally edited config");
+            }
+            Files.writeString(file, "{\"value\": -1}");
+            LodestoneConfig.reloadChangedConfigs();
+            if (value.get() != 1) {
+                throw new AssertionError("Fabric hot reload bypassed the validator");
+            }
+        } catch (IOException exception) {
+            throw new IllegalStateException("Could not exercise Fabric config reload", exception);
+        }
+    }
+
 }
